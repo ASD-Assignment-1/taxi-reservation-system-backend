@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DriverDto {
-    private String Name;
+    private String name;
     private String email;
     private String mobileNumber;
     private String userName;

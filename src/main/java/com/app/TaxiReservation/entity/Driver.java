@@ -20,7 +20,7 @@ public class Driver {
     private Integer id;
 
     @Column(name = "Name", nullable = false)
-    private String Name;
+    private String name;
 
     @Column(name = "email", unique = true, nullable = false)
     private String email;
