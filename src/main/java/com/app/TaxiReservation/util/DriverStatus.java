@@ -1,14 +1,12 @@
 package com.app.TaxiReservation.util;
 
-public enum Role {
-    ADMIN("Admin"),
-    USER("User"),
-    DRIVER("Driver"),
-    GUESTUSER("Guest User");
+public enum DriverStatus {
+    AV("Available"),
+    BUSY("Busy");
 
     private final String displayName;
 
-    Role(String displayName) {
+    DriverStatus(String displayName) {
         this.displayName = displayName;
     }
 
