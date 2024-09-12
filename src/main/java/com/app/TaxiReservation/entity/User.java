@@ -1,7 +1,8 @@
 package com.app.TaxiReservation.entity;
 
 import com.app.TaxiReservation.util.Role;
-import com.app.TaxiReservation.util.Status;
+import com.app.TaxiReservation.util.DriverStatus;
+import com.app.TaxiReservation.util.UserStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,8 +21,8 @@ public class User {
     @Column(name = "userID", nullable = false)
     private Integer id;
 
-    @Column(name = "Name", nullable = false)
-    private String Name;
+    @Column(name = "name", nullable = false)
+    private String name;
 
     @Column(name = "email", unique = true, nullable = false)
     private String email;
@@ -29,15 +30,15 @@ public class User {
     @Column(name = "mobileNumber", unique = true, nullable = false)
     private String mobileNumber;
 
-    @Column(name = "userName", unique = true, nullable = false)
+    @Column(name = "userName")
     private String userName;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password")
     private String password;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private Status status;
+    private UserStatus userStatus;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)

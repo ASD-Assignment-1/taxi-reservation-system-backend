@@ -1,12 +1,12 @@
 package com.app.TaxiReservation.util;
 
-public enum Status {
-    AV("Available"),
-    BUSY("Busy");
+public enum UserStatus {
+    USER("Register user"),
+    GUEST("Guest User");
 
     private final String displayName;
 
-    Status(String displayName) {
+    UserStatus(String displayName) {
         this.displayName = displayName;
     }
 

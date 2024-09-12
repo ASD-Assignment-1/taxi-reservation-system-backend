@@ -1,7 +1,6 @@
 package com.app.TaxiReservation.entity;
 
-import com.app.TaxiReservation.util.Role;
-import com.app.TaxiReservation.util.Status;
+import com.app.TaxiReservation.util.DriverStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -37,7 +36,7 @@ public class Driver {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private Status status;
+    private DriverStatus driverStatus;
 
     @Column(name = "licenseNumber", nullable = false)
     private String licenseNumber;
@@ -48,5 +47,13 @@ public class Driver {
     @Column(name = "lastLogOutDate")
     private Instant lastLogOutDate;
 
+    @Column(name = "longitude")
+    private Double longitude;
+
+    @Column(name = "latitude")
+    private Double latitude;
+
+    @Column(name = "profileImage", columnDefinition = "TEXT")
+    private String profileImage;
 
 }
