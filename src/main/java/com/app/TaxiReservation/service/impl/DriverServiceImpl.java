@@ -12,6 +12,9 @@ import com.app.TaxiReservation.util.DriverStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+
 @Service
 public class DriverServiceImpl implements DriverService {
 
@@ -30,6 +33,7 @@ public class DriverServiceImpl implements DriverService {
             driver.setLicenseNumber(driverDto.getLicenseNumber());
             driver.setProfileImage(driverDto.getProfileImage());
             driver.setDriverStatus(DriverStatus.AV);
+            driver.setLastLogInDate(LocalDateTime.now());
             driverRepository.save(driver);
             return true;
         }catch (Exception e){
@@ -41,7 +45,10 @@ public class DriverServiceImpl implements DriverService {
         try {
             Driver byUserName = driverRepository.findByUserName(loginInputDto.getUserName());
             if (byUserName.getPassword().equals(loginInputDto.getPassword())) {
-                // TODO UPDATE THE LOGIN SESSION TIME
+                byUserName.setLastLogInDate(LocalDateTime.now());
+                byUserName.setLongitude(loginInputDto.getLongitude());
+                byUserName.setLatitude(loginInputDto.getLatitude());
+                driverRepository.save(byUserName);
                 return true;
             } else {
                 throw new UserNotExistException("User not found");

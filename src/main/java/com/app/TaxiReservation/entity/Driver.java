@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -42,10 +43,10 @@ public class Driver {
     private String licenseNumber;
 
     @Column(name = "lastLogInDate")
-    private Instant lastLogInDate;
+    private LocalDateTime lastLogInDate;
 
     @Column(name = "lastLogOutDate")
-    private Instant lastLogOutDate;
+    private LocalDateTime  lastLogOutDate;
 
     @Column(name = "longitude")
     private Double longitude;

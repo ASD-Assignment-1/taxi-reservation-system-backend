@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -45,8 +46,8 @@ public class User {
     private Role role;
 
     @Column(name = "lastLogInDate")
-    private Instant lastLogInDate;
+    private LocalDateTime lastLogInDate;
 
     @Column(name = "lastLogOutDate")
-    private Instant lastLogOutDate;
+    private LocalDateTime lastLogOutDate;
 }
