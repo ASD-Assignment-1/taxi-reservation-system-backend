@@ -65,7 +65,7 @@ public class DriverServiceImpl implements DriverService {
     }
 
     public List<DriverDto> getNearestDrivers(double userLatitude, double userLongitude) {
-        List<Driver> allDrivers = driverRepository.findAll();
+        List<Driver> allDrivers = driverRepository.findAllByDriverStatus(DriverStatus.AV);
         List<DriverDto> nearbyDrivers = new ArrayList<>();
 
         for (Driver driver : allDrivers) {
@@ -75,6 +75,7 @@ public class DriverServiceImpl implements DriverService {
                         driver.getLatitude(), driver.getLongitude());
 
                 double distanceKm = roadDistance.getPaths().get(0).getDistance() / 1000.0;
+                // filtering the drivers within 2 km
                 if (distanceKm <= 2) {
                     nearbyDrivers.add(new DriverDto(driver.getName(),
                             driver.getEmail(),
