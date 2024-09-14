@@ -1,8 +1,10 @@
 package com.app.TaxiReservation.dto.DistanceDto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class InstructionDto {
     private int exit_number;
     private double distance;
