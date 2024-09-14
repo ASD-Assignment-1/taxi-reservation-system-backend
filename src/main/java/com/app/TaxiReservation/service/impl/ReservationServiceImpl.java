@@ -1,7 +1,9 @@
 package com.app.TaxiReservation.service.impl;
 
 import com.app.TaxiReservation.dto.DistanceDto.DistanceResponseDto;
+import com.app.TaxiReservation.dto.DriverDto;
 import com.app.TaxiReservation.dto.ReservationDto;
+import com.app.TaxiReservation.entity.Driver;
 import com.app.TaxiReservation.entity.TaxiReservation;
 import com.app.TaxiReservation.exception.RuntimeException;
 import com.app.TaxiReservation.repository.DriverRepository;
@@ -10,7 +12,11 @@ import com.app.TaxiReservation.repository.UserRepository;
 import com.app.TaxiReservation.service.ReservationService;
 import com.app.TaxiReservation.util.DistanceCalculation;
 import com.app.TaxiReservation.util.Status.ReservationStatus;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -32,6 +38,9 @@ public class ReservationServiceImpl implements ReservationService {
     @Autowired
     private ReservationRepository reservationRepository;
 
+    @Autowired
+    private JavaMailSender javaMailSender;
+
     private final double AmountPerKm = 50;
 
     @Override
@@ -41,7 +50,10 @@ public class ReservationServiceImpl implements ReservationService {
 
             TaxiReservation taxiReservation = new TaxiReservation();
             taxiReservation.setUser(userRepository.findById(reservationDto.getUserId()).get());
-            taxiReservation.setDriver(driverRepository.findByUserName(reservationDto.getDriverUserName()));
+
+            Driver byUserName = driverRepository.findByUserName(reservationDto.getDriverUserName());
+
+            taxiReservation.setDriver(byUserName);
             taxiReservation.setReveredTime(LocalDateTime.now());
 
             DistanceResponseDto roadDistance = distanceCalculation.getRoadDistance(
@@ -61,6 +73,14 @@ public class ReservationServiceImpl implements ReservationService {
             taxiReservation.setDropLongitude(reservationDto.getDropLongitude());
             taxiReservation.setStatus(ReservationStatus.START);
 
+            sendDriverDetails("charithrullz993@gmail.com", new DriverDto(
+                    byUserName.getName(),
+                    byUserName.getEmail(),
+                    byUserName.getMobileNumber(),
+                    byUserName.getUserName(),
+                    byUserName.getLicenseNumber()
+            ));
+
             reservationRepository.save(taxiReservation);
 
             return true;
@@ -71,5 +91,27 @@ public class ReservationServiceImpl implements ReservationService {
 
         }
 
+    }
+
+    private void sendDriverDetails(String toEmail, DriverDto driverDto) {
+        try{
+
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(toEmail);
+            message.setSubject("Driver Details");
+
+            String emailBody = "Driver Details:\n" +
+                    "Name: " + driverDto.getName() + "\n" +
+                    "Email: " + driverDto.getEmail() + "\n" +
+                    "Mobile Number: " + driverDto.getMobileNumber() + "\n" +
+                    "Username: " + driverDto.getUserName() + "\n" +
+                    "License Number: " + driverDto.getLicenseNumber();
+
+            message.setText(emailBody);
+            javaMailSender.send(message);
+
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
     }
 }

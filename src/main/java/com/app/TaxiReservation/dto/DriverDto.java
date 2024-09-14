@@ -25,4 +25,12 @@ public class DriverDto {
         this.licenseNumber = licenseNumber;
         this.profileImage = profileImage;
     }
+
+    public DriverDto(String name, String email, String mobileNumber, String userName, String licenseNumber) {
+        this.name = name;
+        this.email = email;
+        this.mobileNumber = mobileNumber;
+        this.userName = userName;
+        this.licenseNumber = licenseNumber;
+    }
 }
