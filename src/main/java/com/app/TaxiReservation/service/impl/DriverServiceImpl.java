@@ -3,7 +3,6 @@ package com.app.TaxiReservation.service.impl;
 import com.app.TaxiReservation.dto.DriverDto;
 import com.app.TaxiReservation.dto.LoginInputDto;
 import com.app.TaxiReservation.entity.Driver;
-import com.app.TaxiReservation.entity.User;
 import com.app.TaxiReservation.exception.SQLException;
 import com.app.TaxiReservation.exception.UserNotExistException;
 import com.app.TaxiReservation.repository.DriverRepository;
@@ -12,7 +11,6 @@ import com.app.TaxiReservation.util.DriverStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Service

@@ -1,5 +1,6 @@
 package com.app.TaxiReservation.advisor;
 
+import com.app.TaxiReservation.exception.RuntimeException;
 import com.app.TaxiReservation.exception.SQLException;
 import com.app.TaxiReservation.exception.UserNotExistException;
 import com.app.TaxiReservation.util.ResponseUtil;
@@ -14,8 +15,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ResponseUtil> sqlException(SQLException e) {
         e.printStackTrace();
         return new ResponseEntity<>(
-                new ResponseUtil(404, "SQL Exception", e.getMessage()),
-                HttpStatus.NOT_FOUND);
+                new ResponseUtil(400, "SQL Exception", e.getMessage()),
+                HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({UserNotExistException.class})
@@ -24,6 +25,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(
                 new ResponseUtil(404, "User Not Found Exception", e.getMessage()),
                 HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler({RuntimeException.class})
+    public ResponseEntity<ResponseUtil> userNotFound(RuntimeException e) {
+        e.printStackTrace();
+        return new ResponseEntity<>(
+                new ResponseUtil(400, "Runtime Exception", e.getMessage()),
+                HttpStatus.BAD_REQUEST);
     }
 
 }
