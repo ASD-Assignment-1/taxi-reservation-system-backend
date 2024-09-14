@@ -13,6 +13,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,11 +26,32 @@ public class TaxiReservation {
     private Integer id;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "userID")
+    @JoinColumn(name = "userID", nullable = false)
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "driverID")
+    @JoinColumn(name = "driverID", nullable = false)
     private Driver driver;
+
+    @Column(name = "reveredTime", nullable = false)
+    private LocalDateTime reveredTime;
+
+    @Column(name = "paymentAmount", nullable = false)
+    private double paymentAmount;
+
+    @Column(name = "pickupLatitude", nullable = false)
+    private double pickupLatitude;
+
+    @Column(name = "pickupLongitude", nullable = false)
+    private double pickupLongitude;
+
+    @Column(name = "dropLatitude", nullable = false)
+    private double dropLatitude;
+
+    @Column(name = "dropLongitude", nullable = false)
+    private double dropLongitude;
+
+    @Column(name = "status")
+    private String status;
 
 }

@@ -46,6 +46,7 @@ public class DriverServiceImpl implements DriverService {
         }
     }
 
+    @Override
     public boolean login(LoginInputDto loginInputDto) {
         try {
             Driver byUserName = driverRepository.findByUserName(loginInputDto.getUserName());
@@ -64,6 +65,7 @@ public class DriverServiceImpl implements DriverService {
         }
     }
 
+    @Override
     public List<DriverDto> getNearestDrivers(double userLatitude, double userLongitude) {
         List<Driver> allDrivers = driverRepository.findAllByDriverStatus(DriverStatus.AV);
         List<DriverDto> nearbyDrivers = new ArrayList<>();
