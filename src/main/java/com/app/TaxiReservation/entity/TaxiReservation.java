@@ -1,8 +1,11 @@
 package com.app.TaxiReservation.entity;
 
+import com.app.TaxiReservation.util.Status.ReservationStatus;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -52,6 +55,7 @@ public class TaxiReservation {
     private double dropLongitude;
 
     @Column(name = "status")
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private ReservationStatus status;
 
 }

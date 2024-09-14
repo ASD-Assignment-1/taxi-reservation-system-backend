@@ -9,7 +9,7 @@ import com.app.TaxiReservation.exception.UserNotExistException;
 import com.app.TaxiReservation.repository.UserRepository;
 import com.app.TaxiReservation.service.DriverService;
 import com.app.TaxiReservation.service.UserService;
-import com.app.TaxiReservation.util.UserStatus;
+import com.app.TaxiReservation.util.Status.UserStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,9 +20,9 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
-    DriverService driverService;
+    private DriverService driverService;
 
     @Override
     public boolean userRegistration(UserDto userDto) {

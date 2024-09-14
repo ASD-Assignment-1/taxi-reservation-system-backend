@@ -1,12 +1,11 @@
 package com.app.TaxiReservation.entity;
 
-import com.app.TaxiReservation.util.DriverStatus;
+import com.app.TaxiReservation.util.Status.DriverStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 

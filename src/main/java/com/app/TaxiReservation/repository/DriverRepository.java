@@ -1,8 +1,7 @@
 package com.app.TaxiReservation.repository;
 
 import com.app.TaxiReservation.entity.Driver;
-import com.app.TaxiReservation.entity.User;
-import com.app.TaxiReservation.util.DriverStatus;
+import com.app.TaxiReservation.util.Status.DriverStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

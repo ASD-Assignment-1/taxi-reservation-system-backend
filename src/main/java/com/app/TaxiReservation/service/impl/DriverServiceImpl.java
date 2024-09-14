@@ -9,7 +9,7 @@ import com.app.TaxiReservation.exception.UserNotExistException;
 import com.app.TaxiReservation.repository.DriverRepository;
 import com.app.TaxiReservation.service.DriverService;
 import com.app.TaxiReservation.util.DistanceCalculation;
-import com.app.TaxiReservation.util.DriverStatus;
+import com.app.TaxiReservation.util.Status.DriverStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

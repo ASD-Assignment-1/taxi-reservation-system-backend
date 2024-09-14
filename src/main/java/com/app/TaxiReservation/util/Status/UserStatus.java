@@ -1,4 +1,4 @@
-package com.app.TaxiReservation.util;
+package com.app.TaxiReservation.util.Status;
 
 public enum UserStatus {
     USER("Register user"),
