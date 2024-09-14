@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -56,5 +57,8 @@ public class Driver {
 
     @Column(name = "profileImage", columnDefinition = "TEXT")
     private String profileImage;
+
+    @OneToMany(mappedBy = "driver")
+    private List<TaxiReservation> taxiReservation;
 
 }

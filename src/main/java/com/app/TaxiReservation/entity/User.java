@@ -50,4 +50,8 @@ public class User {
 
     @Column(name = "lastLogOutDate")
     private LocalDateTime lastLogOutDate;
+
+    @OneToOne(mappedBy = "user")
+    private TaxiReservation taxiReservation;
+
 }

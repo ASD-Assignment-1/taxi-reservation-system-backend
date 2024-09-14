@@ -8,8 +8,6 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "taxi")
 @Data
 public class ApplicationProperties {
-
     private String apiKey;
-
-
+    private String graphhopperUrl;
 }
