@@ -39,4 +39,9 @@ public class AdminController {
         return new ResponseUtil(200, "success", adminService.reserveTaxiManually(reservationDto));
     }
 
+    @GetMapping("/onGoingTrips")
+    public ResponseUtil getOnGoingTrips() {
+        return new ResponseUtil(200, "success", adminService.getAllOngoingReservations());
+    }
+
 }

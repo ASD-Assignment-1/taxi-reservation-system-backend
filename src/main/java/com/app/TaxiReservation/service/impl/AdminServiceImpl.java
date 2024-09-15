@@ -7,11 +7,13 @@ import com.app.TaxiReservation.entity.Driver;
 import com.app.TaxiReservation.entity.User;
 import com.app.TaxiReservation.exception.RuntimeException;
 import com.app.TaxiReservation.repository.DriverRepository;
+import com.app.TaxiReservation.repository.ReservationRepository;
 import com.app.TaxiReservation.repository.UserRepository;
 import com.app.TaxiReservation.service.AdminService;
 import com.app.TaxiReservation.service.ReservationService;
 import com.app.TaxiReservation.util.Role;
 import com.app.TaxiReservation.util.Status.DriverStatus;
+import com.app.TaxiReservation.util.Status.ReservationStatus;
 import com.app.TaxiReservation.util.Status.UserStatus;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,9 @@ public class AdminServiceImpl implements AdminService {
 
     @Autowired
     ReservationService reservationService;
+
+    @Autowired
+    ReservationRepository reservationRepository;
 
     @Override
     @Transactional
@@ -76,6 +81,10 @@ public class AdminServiceImpl implements AdminService {
         }catch (Exception e){
             throw new RuntimeException(e.getMessage());
         }
+    }
+
+    public long getAllOngoingReservations(){
+       return reservationRepository.countAllByStatus(ReservationStatus.START);
     }
 
 }
