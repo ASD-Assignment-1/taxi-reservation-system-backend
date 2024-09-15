@@ -4,28 +4,26 @@ import com.app.TaxiReservation.dto.DistanceDto.DistanceResponseDto;
 import com.app.TaxiReservation.dto.DriverDto;
 import com.app.TaxiReservation.dto.ReservationDto;
 import com.app.TaxiReservation.entity.Driver;
+import com.app.TaxiReservation.entity.Payment;
 import com.app.TaxiReservation.entity.TaxiReservation;
 import com.app.TaxiReservation.entity.User;
 import com.app.TaxiReservation.exception.RuntimeException;
 import com.app.TaxiReservation.repository.DriverRepository;
+import com.app.TaxiReservation.repository.PaymentRepository;
 import com.app.TaxiReservation.repository.ReservationRepository;
 import com.app.TaxiReservation.repository.UserRepository;
 import com.app.TaxiReservation.service.ReservationService;
 import com.app.TaxiReservation.util.DistanceCalculation;
+import com.app.TaxiReservation.util.Status.DriverStatus;
+import com.app.TaxiReservation.util.Status.PaymentStatus;
 import com.app.TaxiReservation.util.Status.ReservationStatus;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.time.LocalDateTime;
 
 @Service
@@ -42,6 +40,8 @@ public class ReservationServiceImpl implements ReservationService {
     private ReservationRepository reservationRepository;
     @Autowired
     private JavaMailSender javaMailSender;
+    @Autowired
+    private PaymentRepository paymentRepository;
 
     @Override
     public boolean reserveTaxi(ReservationDto reservationDto) {
@@ -79,6 +79,7 @@ public class ReservationServiceImpl implements ReservationService {
             ));
 
             reservationRepository.save(taxiReservation);
+            resetDriverStatus(byUserName.getId(), DriverStatus.BUSY);
 
             return true;
 
@@ -111,4 +112,39 @@ public class ReservationServiceImpl implements ReservationService {
             throw new RuntimeException(e.getMessage());
         }
     }
+
+    public void makePayments(Integer reservationID){
+
+        try {
+
+            TaxiReservation taxiReservation = reservationRepository.findById(reservationID).get();
+
+            Payment payment = new Payment();
+            payment.setTaxiReservation(taxiReservation);
+            payment.setAmount(taxiReservation.getPaymentAmount());
+            payment.setPaymentTime(LocalDateTime.now());
+            payment.setPaymentStatus(PaymentStatus.DONE);
+
+            resetDriverStatus(taxiReservation.getDriver().getId(), DriverStatus.AV);
+
+            paymentRepository.save(payment);
+
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
+
+    }
+
+    private void resetDriverStatus(Integer driverID , DriverStatus driverStatus){
+        try {
+
+            Driver driver = driverRepository.findById(driverID).get();
+            driver.setDriverStatus(driverStatus);
+            driverRepository.save(driver);
+
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
 }

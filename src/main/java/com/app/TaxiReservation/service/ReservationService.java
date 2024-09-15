@@ -4,4 +4,5 @@ import com.app.TaxiReservation.dto.ReservationDto;
 
 public interface ReservationService {
     boolean reserveTaxi(ReservationDto reservationDto);
+    void makePayments(Integer reservationID);
 }

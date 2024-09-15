@@ -2,6 +2,7 @@ package com.app.TaxiReservation.controller;
 
 import com.app.TaxiReservation.dto.LoginInputDto;
 import com.app.TaxiReservation.dto.UserDto;
+import com.app.TaxiReservation.service.ReservationService;
 import com.app.TaxiReservation.service.UserService;
 import com.app.TaxiReservation.util.ResponseUtil;
 import com.app.TaxiReservation.util.Role;
@@ -25,6 +26,9 @@ public class UserController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    ReservationService reservationService;
+
     @GetMapping("/roles")
     public ResponseUtil getAllRoles() {
         return new ResponseUtil(200, "success", Arrays.stream(Role.values()).collect(Collectors.toMap(Role::name, Role::getDisplayName)));
@@ -38,6 +42,12 @@ public class UserController {
     @GetMapping("/login")
     public ResponseUtil login(@RequestBody LoginInputDto loginInputDto) {
         return new ResponseUtil(200, "success", userService.login(loginInputDto));
+    }
+
+    @PostMapping("/pay")
+    public ResponseUtil makePayment(@RequestParam Integer reservationId) {
+        reservationService.makePayments(reservationId);
+        return new ResponseUtil(200, "success","Payment success");
     }
 
 }

@@ -58,4 +58,7 @@ public class TaxiReservation {
     @Enumerated(EnumType.STRING)
     private ReservationStatus status;
 
+    @OneToOne(mappedBy = "taxiReservation")
+    private Payment payment;
+
 }

@@ -83,6 +83,7 @@ public class AdminServiceImpl implements AdminService {
         }
     }
 
+    @Override
     public long getAllOngoingReservations(){
        return reservationRepository.countAllByStatus(ReservationStatus.START);
     }
