@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DriverServiceImpl implements DriverService {
@@ -89,5 +90,13 @@ public class DriverServiceImpl implements DriverService {
             }
         }
         return nearbyDrivers;
+    }
+
+    @Override
+    public List<DriverDto> getAllDrivers(){
+        List<Driver> all = driverRepository.findAll();
+        return all.stream()
+                .map(driver -> new DriverDto(driver.getName(), driver.getEmail(), driver.getMobileNumber(), driver.getUserName(), driver.getLicenseNumber(), driver.getProfileImage(), driver.getDriverStatus().getDisplayName()))
+                .collect(Collectors.toList());
     }
 }

@@ -52,4 +52,36 @@ public class DistanceCalculation {
             throw new RuntimeException(e.getMessage());
         }
     }
+
+    /*public String getLocationName(double latitude, double longitude) {
+        try {
+            // Build the Nominatim API URL
+            String urlString = String.format("https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=%f&lon=%f", latitude, longitude);
+            URL url = new URL(urlString);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("User-Agent", "Mozilla/5.0");  // Set a user agent to avoid potential blocks
+
+            // Read the response
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String inputLine;
+            StringBuilder content = new StringBuilder();
+            while ((inputLine = in.readLine()) != null) {
+                content.append(inputLine);
+            }
+            in.close();
+            conn.disconnect();
+
+            // Parse JSON response
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(content.toString());
+
+            // Extract the display name (location name)
+            String locationName = jsonNode.get("display_name").asText();
+            return locationName;
+
+        } catch (Exception e) {
+            throw new java.lang.RuntimeException("Error while getting location name: " + e.getMessage());
+        }
+    }*/
 }
