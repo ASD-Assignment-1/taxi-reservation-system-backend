@@ -70,7 +70,7 @@ public class ReservationServiceImpl implements ReservationService {
             taxiReservation.setDropLongitude(reservationDto.getDropLongitude());
             taxiReservation.setStatus(ReservationStatus.START);
 
-             sendDriverDetails("charithrullz993@gmail.com", new DriverDto(
+             sendDriverDetails(user.getEmail(), new DriverDto(
                     byUserName.getName(),
                     byUserName.getEmail(),
                     byUserName.getMobileNumber(),

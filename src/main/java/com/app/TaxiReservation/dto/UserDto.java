@@ -16,4 +16,10 @@ public class UserDto {
     private String userName;
     private String password;
     private Role role;
+
+    public UserDto(String name, String email, String mobileNumber) {
+        this.name = name;
+        this.email = email;
+        this.mobileNumber = mobileNumber;
+    }
 }
