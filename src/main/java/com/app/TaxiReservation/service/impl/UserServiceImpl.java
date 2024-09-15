@@ -2,6 +2,7 @@ package com.app.TaxiReservation.service.impl;
 
 import com.app.TaxiReservation.dto.DriverDto;
 import com.app.TaxiReservation.dto.LoginInputDto;
+import com.app.TaxiReservation.dto.LoginOutputDto;
 import com.app.TaxiReservation.dto.UserDto;
 import com.app.TaxiReservation.entity.User;
 import com.app.TaxiReservation.exception.SQLException;
@@ -45,13 +46,17 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public List<DriverDto> login(LoginInputDto loginInputDto) {
+    public LoginOutputDto login(LoginInputDto loginInputDto) {
         try {
             User byUserName = userRepository.findByUserName(loginInputDto.getUserName());
             if (byUserName.getPassword().equals(loginInputDto.getPassword())) {
                 byUserName.setLastLogInDate(LocalDateTime.now());
                 userRepository.save(byUserName);
-                return driverService.getNearestDrivers(loginInputDto.getLatitude(), loginInputDto.getLongitude());
+                if (byUserName.getUserStatus().equals(UserStatus.USER)) {
+                    return new LoginOutputDto(byUserName.getRole().getDisplayName(), byUserName.getUserStatus().getDisplayName() ,driverService.getNearestDrivers(loginInputDto.getLatitude(), loginInputDto.getLongitude()));
+                }
+
+                return new LoginOutputDto(UserStatus.ADMIN.getDisplayName(), byUserName.getUserStatus().getDisplayName(), null);
             } else {
                 throw new UserNotExistException("User not found");
             }

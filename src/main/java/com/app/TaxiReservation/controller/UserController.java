@@ -39,7 +39,7 @@ public class UserController {
         return new ResponseUtil(200, "success", userService.userRegistration(userDto));
     }
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     public ResponseUtil login(@RequestBody LoginInputDto loginInputDto) {
         return new ResponseUtil(200, "success", userService.login(loginInputDto));
     }

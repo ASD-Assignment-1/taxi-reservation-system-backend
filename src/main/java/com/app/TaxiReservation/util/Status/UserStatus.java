@@ -2,7 +2,9 @@ package com.app.TaxiReservation.util.Status;
 
 public enum UserStatus {
     USER("Register user"),
-    GUEST("Guest User");
+    GUEST("Guest User"),
+    ADMIN("Admin User"),
+    DRIVER("Driver User");
 
     private final String displayName;
 

@@ -3,6 +3,7 @@ package com.app.TaxiReservation.service.impl;
 import com.app.TaxiReservation.dto.DistanceDto.DistanceResponseDto;
 import com.app.TaxiReservation.dto.DriverDto;
 import com.app.TaxiReservation.dto.LoginInputDto;
+import com.app.TaxiReservation.dto.LoginOutputDto;
 import com.app.TaxiReservation.entity.Driver;
 import com.app.TaxiReservation.exception.SQLException;
 import com.app.TaxiReservation.exception.UserNotExistException;
@@ -10,6 +11,7 @@ import com.app.TaxiReservation.repository.DriverRepository;
 import com.app.TaxiReservation.service.DriverService;
 import com.app.TaxiReservation.util.DistanceCalculation;
 import com.app.TaxiReservation.util.Status.DriverStatus;
+import com.app.TaxiReservation.util.Status.UserStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,7 +51,7 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public boolean login(LoginInputDto loginInputDto) {
+    public LoginOutputDto login(LoginInputDto loginInputDto) {
         try {
             Driver byUserName = driverRepository.findByUserName(loginInputDto.getUserName());
             if (byUserName.getPassword().equals(loginInputDto.getPassword())) {
@@ -57,7 +59,7 @@ public class DriverServiceImpl implements DriverService {
                 byUserName.setLongitude(loginInputDto.getLongitude());
                 byUserName.setLatitude(loginInputDto.getLatitude());
                 driverRepository.save(byUserName);
-                return true;
+                return new LoginOutputDto(UserStatus.DRIVER.getDisplayName(), byUserName.getDriverStatus().getDisplayName(), null);
             } else {
                 throw new UserNotExistException("User not found");
             }
