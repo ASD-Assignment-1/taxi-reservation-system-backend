@@ -9,5 +9,5 @@ public interface DriverService {
     boolean saveDriver(DriverDto driverDto);
     boolean login(LoginInputDto loginInputDto);
     List<DriverDto> getNearestDrivers(double userLatitude, double userLongitude);
-    List<DriverDto> getAllDrivers();
+    List<DriverDto> getAllDrivers(String driverStatus);
 }

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -93,8 +94,14 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public List<DriverDto> getAllDrivers(){
-        List<Driver> all = driverRepository.findAll();
+    public List<DriverDto> getAllDrivers(String driverStatus){
+        // Convert the display name to the corresponding DriverStatus enum
+        DriverStatus status = Arrays.stream(DriverStatus.values())
+                .filter(s -> s.getDisplayName().equalsIgnoreCase(driverStatus))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Invalid Driver Status: " + driverStatus));
+
+        List<Driver> all = driverRepository.findAllByDriverStatus(status);
         return all.stream()
                 .map(driver -> new DriverDto(driver.getName(), driver.getEmail(), driver.getMobileNumber(), driver.getUserName(), driver.getLicenseNumber(), driver.getProfileImage(), driver.getDriverStatus().getDisplayName()))
                 .collect(Collectors.toList());

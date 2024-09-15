@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -30,8 +31,8 @@ public class AdminController {
     }
 
     @GetMapping("/drivers")
-    public ResponseUtil getAllDrivers() {
-        return new ResponseUtil(200, "success", driverService.getAllDrivers());
+    public ResponseUtil getAllDrivers(@RequestParam String driverStatus) {
+        return new ResponseUtil(200, "success", driverService.getAllDrivers(driverStatus));
     }
 
     @PostMapping("/reserve")
