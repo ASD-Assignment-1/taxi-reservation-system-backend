@@ -44,7 +44,7 @@ public class UserController {
         return new ResponseUtil(200, "success", userService.login(loginInputDto));
     }
 
-    @PostMapping("/pay")
+    @GetMapping("/pay")
     public ResponseUtil makePayment(@RequestParam Integer reservationId) {
         reservationService.makePayments(reservationId);
         return new ResponseUtil(200, "success","Payment success");
