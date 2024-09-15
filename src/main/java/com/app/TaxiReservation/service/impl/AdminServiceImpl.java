@@ -7,12 +7,14 @@ import com.app.TaxiReservation.entity.Driver;
 import com.app.TaxiReservation.entity.User;
 import com.app.TaxiReservation.exception.RuntimeException;
 import com.app.TaxiReservation.repository.DriverRepository;
+import com.app.TaxiReservation.repository.PaymentRepository;
 import com.app.TaxiReservation.repository.ReservationRepository;
 import com.app.TaxiReservation.repository.UserRepository;
 import com.app.TaxiReservation.service.AdminService;
 import com.app.TaxiReservation.service.ReservationService;
 import com.app.TaxiReservation.util.Role;
 import com.app.TaxiReservation.util.Status.DriverStatus;
+import com.app.TaxiReservation.util.Status.PaymentStatus;
 import com.app.TaxiReservation.util.Status.ReservationStatus;
 import com.app.TaxiReservation.util.Status.UserStatus;
 import jakarta.transaction.Transactional;
@@ -33,6 +35,9 @@ public class AdminServiceImpl implements AdminService {
 
     @Autowired
     ReservationRepository reservationRepository;
+
+    @Autowired
+    PaymentRepository paymentRepository;
 
     @Override
     @Transactional
@@ -86,6 +91,10 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public long getAllOngoingReservations(){
        return reservationRepository.countAllByStatus(ReservationStatus.START);
+    }
+
+    public double getAllFullTotalIncome(){
+        return paymentRepository.sumAmountByPaymentStatus(PaymentStatus.DONE);
     }
 
 }

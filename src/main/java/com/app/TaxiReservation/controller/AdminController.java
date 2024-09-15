@@ -44,4 +44,9 @@ public class AdminController {
         return new ResponseUtil(200, "success", adminService.getAllOngoingReservations());
     }
 
+    @GetMapping("/fullTotalAmount")
+    public ResponseUtil getFullTotalAmount() {
+        return new ResponseUtil(200, "success", adminService.getAllFullTotalIncome());
+    }
+
 }
