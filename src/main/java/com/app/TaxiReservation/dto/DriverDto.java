@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DriverDto {
+    private Integer id;
     private String name;
     private String email;
     private String mobileNumber;
@@ -35,7 +36,8 @@ public class DriverDto {
         this.licenseNumber = licenseNumber;
     }
 
-    public DriverDto(String name, String email, String mobileNumber, String userName, String licenseNumber, String profileImage, String status) {
+    public DriverDto(Integer id, String name, String email, String mobileNumber, String userName, String licenseNumber, String profileImage, String status) {
+        this.id = id;
         this.name = name;
         this.email = email;
         this.mobileNumber = mobileNumber;

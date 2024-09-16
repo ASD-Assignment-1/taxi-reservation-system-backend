@@ -60,4 +60,7 @@ public class Driver {
     @OneToMany(mappedBy = "driver")
     private List<TaxiReservation> taxiReservation;
 
+    @OneToMany(mappedBy = "driver")
+    private List<Rating> ratings;
+
 }

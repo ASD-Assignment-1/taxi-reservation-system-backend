@@ -1,6 +1,7 @@
 package com.app.TaxiReservation.controller;
 
 import com.app.TaxiReservation.dto.LoginInputDto;
+import com.app.TaxiReservation.dto.RatingDto;
 import com.app.TaxiReservation.dto.UserDto;
 import com.app.TaxiReservation.service.ReservationService;
 import com.app.TaxiReservation.service.UserService;
@@ -48,6 +49,11 @@ public class UserController {
     public ResponseUtil makePayment(@RequestParam Integer reservationId) {
         reservationService.makePayments(reservationId);
         return new ResponseUtil(200, "success","Payment success");
+    }
+
+    @PostMapping("/rate")
+    public ResponseUtil rateDriver(@RequestBody RatingDto ratingDto) {
+        return new ResponseUtil(200, "success", userService.rateDriver(ratingDto));
     }
 
 }

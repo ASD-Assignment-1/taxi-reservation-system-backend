@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -51,5 +52,8 @@ public class User {
 
     @OneToOne(mappedBy = "user")
     private TaxiReservation taxiReservation;
+
+    @OneToMany(mappedBy = "user")
+    private List<Rating> ratings;
 
 }

@@ -60,6 +60,7 @@ public class DriverServiceImpl implements DriverService {
                 byUserName.setLatitude(loginInputDto.getLatitude());
                 driverRepository.save(byUserName);
                 DriverDto driverDto = new DriverDto(
+                        byUserName.getId(),
                         byUserName.getName(),
                         byUserName.getEmail(),
                         byUserName.getMobileNumber(),
@@ -114,7 +115,7 @@ public class DriverServiceImpl implements DriverService {
 
         List<Driver> all = driverRepository.findAllByDriverStatus(status);
         return all.stream()
-                .map(driver -> new DriverDto(driver.getName(), driver.getEmail(), driver.getMobileNumber(), driver.getUserName(), driver.getLicenseNumber(), driver.getProfileImage(), driver.getDriverStatus().getDisplayName()))
+                .map(driver -> new DriverDto(driver.getId(), driver.getName(), driver.getEmail(), driver.getMobileNumber(), driver.getUserName(), driver.getLicenseNumber(), driver.getProfileImage(), driver.getDriverStatus().getDisplayName()))
                 .collect(Collectors.toList());
     }
 }

@@ -1,12 +1,17 @@
 package com.app.TaxiReservation.service.impl;
 
-import com.app.TaxiReservation.dto.DriverDto;
+
 import com.app.TaxiReservation.dto.LoginInputDto;
 import com.app.TaxiReservation.dto.LoginOutputDto;
+import com.app.TaxiReservation.dto.RatingDto;
 import com.app.TaxiReservation.dto.UserDto;
+import com.app.TaxiReservation.entity.Rating;
 import com.app.TaxiReservation.entity.User;
+import com.app.TaxiReservation.exception.RuntimeException;
 import com.app.TaxiReservation.exception.SQLException;
 import com.app.TaxiReservation.exception.UserNotExistException;
+import com.app.TaxiReservation.repository.DriverRepository;
+import com.app.TaxiReservation.repository.RatingRepository;
 import com.app.TaxiReservation.repository.UserRepository;
 import com.app.TaxiReservation.service.DriverService;
 import com.app.TaxiReservation.service.UserService;
@@ -15,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -24,6 +28,10 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     @Autowired
     private DriverService driverService;
+    @Autowired
+    private DriverRepository driverRepository;
+    @Autowired
+    private RatingRepository ratingRepository;
 
     @Override
     public boolean userRegistration(UserDto userDto) {
@@ -63,6 +71,22 @@ public class UserServiceImpl implements UserService {
 
         } catch (Exception e) {
             throw new SQLException(e.getMessage());
+        }
+    }
+
+    @Override
+    public boolean rateDriver(RatingDto ratingDto){
+        try {
+
+            Rating rating = new Rating();
+            rating.setUser(userRepository.findById(ratingDto.getUserID()).get());
+            rating.setDriver(driverRepository.findById(ratingDto.getDriverID()).get());
+            rating.setScore(ratingDto.getScore());
+            rating.setReview(ratingDto.getReview());
+            ratingRepository.save(rating);
+            return true;
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
         }
     }
 
