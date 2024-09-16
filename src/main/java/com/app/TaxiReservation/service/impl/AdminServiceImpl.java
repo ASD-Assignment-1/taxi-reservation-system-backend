@@ -54,7 +54,7 @@ public class AdminServiceImpl implements AdminService {
 
             ReservationDto reservationDto  = new ReservationDto();
             reservationDto.setUserId(createdUser.getId());
-            reservationDto.setDriverUserName(byUserName.getUserName());
+            reservationDto.setDriverUserName(byUserName.getUsername());
             reservationDto.setPickupLatitude(adminReservationDto.getPickupLatitude());
             reservationDto.setPickupLongitude(adminReservationDto.getPickupLongitude());
             reservationDto.setDropLatitude(adminReservationDto.getDropLatitude());

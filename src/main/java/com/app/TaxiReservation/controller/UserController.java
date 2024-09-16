@@ -40,10 +40,10 @@ public class UserController {
         return new ResponseUtil(200, "success", userService.userRegistration(userDto));
     }
 
-    @PostMapping("/login")
+    /*@PostMapping("/login")
     public ResponseUtil login(@RequestBody LoginInputDto loginInputDto) {
         return new ResponseUtil(200, "success", userService.login(loginInputDto));
-    }
+    }*/
 
     @GetMapping("/pay")
     public ResponseUtil makePayment(@RequestParam Integer reservationId) {

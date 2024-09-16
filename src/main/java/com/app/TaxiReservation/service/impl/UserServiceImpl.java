@@ -16,9 +16,14 @@ import com.app.TaxiReservation.repository.UserRepository;
 import com.app.TaxiReservation.service.DriverService;
 import com.app.TaxiReservation.service.UserService;
 import com.app.TaxiReservation.util.Status.UserStatus;
+import com.app.TaxiReservation.util.security.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.nio.CharBuffer;
 import java.time.LocalDateTime;
 
 @Service
@@ -32,6 +37,11 @@ public class UserServiceImpl implements UserService {
     private DriverRepository driverRepository;
     @Autowired
     private RatingRepository ratingRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private JwtService jwtService;
+
 
     @Override
     public boolean userRegistration(UserDto userDto) {
@@ -41,34 +51,12 @@ public class UserServiceImpl implements UserService {
             user.setEmail(userDto.getEmail());
             user.setMobileNumber(userDto.getMobileNumber());
             user.setUserName(userDto.getUserName());
-            user.setPassword(userDto.getPassword());
+            user.setPassword(passwordEncoder.encode(userDto.getPassword()));
             user.setRole(userDto.getRole());
             user.setUserStatus(UserStatus.USER);
             user.setLastLogInDate(LocalDateTime.now());
             userRepository.save(user);
             return true;
-        } catch (Exception e) {
-            throw new SQLException(e.getMessage());
-        }
-    }
-
-
-    @Override
-    public LoginOutputDto login(LoginInputDto loginInputDto) {
-        try {
-            User byUserName = userRepository.findByUserName(loginInputDto.getUserName());
-            if (byUserName.getPassword().equals(loginInputDto.getPassword())) {
-                byUserName.setLastLogInDate(LocalDateTime.now());
-                userRepository.save(byUserName);
-                if (byUserName.getUserStatus().equals(UserStatus.USER)) {
-                    return new LoginOutputDto(byUserName.getRole().getDisplayName(), byUserName.getUserStatus().getDisplayName() ,driverService.getNearestDrivers(loginInputDto.getLatitude(), loginInputDto.getLongitude()));
-                }
-
-                return new LoginOutputDto(UserStatus.ADMIN.getDisplayName(), byUserName.getUserStatus().getDisplayName(), null);
-            } else {
-                throw new UserNotExistException("User not found");
-            }
-
         } catch (Exception e) {
             throw new SQLException(e.getMessage());
         }
@@ -87,6 +75,30 @@ public class UserServiceImpl implements UserService {
             return true;
         }catch (Exception e){
             throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    @Override
+    public LoginOutputDto login(LoginInputDto loginInputDto) {
+        User user = userRepository.findByUserName(loginInputDto.getUserName())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        /*UserDetails userDetails = userRepository.findByUserName(loginInputDto.getUserName())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));*/
+
+        if (!passwordEncoder.matches(loginInputDto.getPassword(), user.getPassword())) {
+            throw new RuntimeException("Incorrect username or password");
+        }
+
+        user.setLastLogInDate(LocalDateTime.now());
+        userRepository.save(user);
+
+        String jwt = jwtService.generateToken(new UserDto(user.getUsername(), user.getUsername()));
+
+        if (user.getUserStatus().equals(UserStatus.USER)) {
+            return new LoginOutputDto(user.getRole().getDisplayName(), user.getUserStatus().getDisplayName() ,driverService.getNearestDrivers(loginInputDto.getLatitude(), loginInputDto.getLongitude()), jwt);
+        } else {
+            return new LoginOutputDto(UserStatus.ADMIN.getDisplayName(), user.getUserStatus().getDisplayName(), null, jwt);
         }
     }
 

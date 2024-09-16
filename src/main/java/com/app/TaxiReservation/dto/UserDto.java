@@ -22,4 +22,9 @@ public class UserDto {
         this.email = email;
         this.mobileNumber = mobileNumber;
     }
+
+    public UserDto(String name, String userName) {
+        this.name = name;
+        this.userName = userName;
+    }
 }

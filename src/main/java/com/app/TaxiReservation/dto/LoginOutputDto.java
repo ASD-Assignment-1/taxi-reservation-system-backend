@@ -13,4 +13,5 @@ public class LoginOutputDto {
     private String role;
     private String status;
     private List<DriverDto> driverDtos;
+    private String token;
 }

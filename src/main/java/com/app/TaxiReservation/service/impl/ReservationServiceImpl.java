@@ -52,7 +52,7 @@ public class ReservationServiceImpl implements ReservationService {
             User user = userRepository.findById(reservationDto.getUserId()).get();
             taxiReservation.setUser(user);
 
-            Driver byUserName = driverRepository.findByUserName(reservationDto.getDriverUserName());
+            Driver byUserName = driverRepository.findByUserName(reservationDto.getDriverUserName()).get();
 
             taxiReservation.setDriver(byUserName);
             taxiReservation.setReveredTime(LocalDateTime.now());
@@ -74,7 +74,7 @@ public class ReservationServiceImpl implements ReservationService {
                     byUserName.getName(),
                     byUserName.getEmail(),
                     byUserName.getMobileNumber(),
-                    byUserName.getUserName(),
+                    byUserName.getUsername(),
                     byUserName.getLicenseNumber()
             ));
 
