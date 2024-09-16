@@ -59,7 +59,16 @@ public class DriverServiceImpl implements DriverService {
                 byUserName.setLongitude(loginInputDto.getLongitude());
                 byUserName.setLatitude(loginInputDto.getLatitude());
                 driverRepository.save(byUserName);
-                return new LoginOutputDto(UserStatus.DRIVER.getDisplayName(), byUserName.getDriverStatus().getDisplayName(), null);
+                DriverDto driverDto = new DriverDto(
+                        byUserName.getName(),
+                        byUserName.getEmail(),
+                        byUserName.getMobileNumber(),
+                        byUserName.getUserName(),
+                        byUserName.getLicenseNumber(),
+                        byUserName.getProfileImage(),
+                        byUserName.getDriverStatus().getDisplayName()
+                );
+                return new LoginOutputDto(UserStatus.DRIVER.getDisplayName(), byUserName.getDriverStatus().getDisplayName(), Arrays.asList(driverDto));
             } else {
                 throw new UserNotExistException("User not found");
             }
