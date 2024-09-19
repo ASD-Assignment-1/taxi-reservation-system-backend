@@ -22,4 +22,13 @@ public class UserDto {
         this.email = email;
         this.mobileNumber = mobileNumber;
     }
+
+    public UserDto(Integer id, String name, String email, String mobileNumber, String userName, Role role) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.mobileNumber = mobileNumber;
+        this.userName = userName;
+        this.role = role;
+    }
 }

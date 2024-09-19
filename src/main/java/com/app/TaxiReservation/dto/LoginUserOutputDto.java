@@ -7,10 +7,9 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class LoginOutputDto {
-    private String role;
-    private String status;
+@NoArgsConstructor
+public class LoginUserOutputDto {
+    private UserDto userDto;
     private List<DriverDto> driverDtos;
 }

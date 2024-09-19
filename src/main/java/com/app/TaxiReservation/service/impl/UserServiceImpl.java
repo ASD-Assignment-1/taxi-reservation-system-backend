@@ -2,7 +2,7 @@ package com.app.TaxiReservation.service.impl;
 
 
 import com.app.TaxiReservation.dto.LoginInputDto;
-import com.app.TaxiReservation.dto.LoginOutputDto;
+import com.app.TaxiReservation.dto.LoginUserOutputDto;
 import com.app.TaxiReservation.dto.RatingDto;
 import com.app.TaxiReservation.dto.UserDto;
 import com.app.TaxiReservation.entity.Rating;
@@ -54,17 +54,34 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public LoginOutputDto login(LoginInputDto loginInputDto) {
+    public LoginUserOutputDto login(LoginInputDto loginInputDto) {
         try {
             User byUserName = userRepository.findByUserName(loginInputDto.getUserName());
             if (byUserName.getPassword().equals(loginInputDto.getPassword())) {
                 byUserName.setLastLogInDate(LocalDateTime.now());
                 userRepository.save(byUserName);
                 if (byUserName.getUserStatus().equals(UserStatus.USER)) {
-                    return new LoginOutputDto(byUserName.getRole().getDisplayName(), byUserName.getUserStatus().getDisplayName() ,driverService.getNearestDrivers(loginInputDto.getLatitude(), loginInputDto.getLongitude()));
+                    return new LoginUserOutputDto(new UserDto(
+                            byUserName.getId(),
+                            byUserName.getName(),
+                            byUserName.getEmail(),
+                            byUserName.getMobileNumber(),
+                            byUserName.getUserName(),
+                            byUserName.getRole()
+                    ), driverService.getNearestDrivers(loginInputDto.getLatitude(), loginInputDto.getLongitude()));
+
                 }
 
-                return new LoginOutputDto(UserStatus.ADMIN.getDisplayName(), byUserName.getUserStatus().getDisplayName(), null);
+                return new LoginUserOutputDto(new UserDto(
+                        byUserName.getId(),
+                        byUserName.getName(),
+                        byUserName.getEmail(),
+                        byUserName.getMobileNumber(),
+                        byUserName.getUserName(),
+                        byUserName.getRole()
+                ), null);
+
+
             } else {
                 throw new UserNotExistException("User not found");
             }
