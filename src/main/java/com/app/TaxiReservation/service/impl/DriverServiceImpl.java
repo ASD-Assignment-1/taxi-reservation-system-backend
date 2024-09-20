@@ -66,7 +66,9 @@ public class DriverServiceImpl implements DriverService {
                         byUserName.getUserName(),
                         byUserName.getLicenseNumber(),
                         byUserName.getProfileImage(),
-                        byUserName.getDriverStatus().getDisplayName()
+                        byUserName.getDriverStatus().getDisplayName(),
+                        byUserName.getLastLogInDate(),
+                        byUserName.getLastLogOutDate()
                 );
                 return driverDto;
             } else {
@@ -120,7 +122,7 @@ public class DriverServiceImpl implements DriverService {
 
         List<Driver> all = driverRepository.findAllByDriverStatus(status);
         return all.stream()
-                .map(driver -> new DriverDto(driver.getId(), driver.getName(), driver.getEmail(), driver.getMobileNumber(), driver.getUserName(), driver.getLicenseNumber(), driver.getProfileImage(), driver.getDriverStatus().getDisplayName()))
+                .map(driver -> new DriverDto(driver.getId(), driver.getName(), driver.getEmail(), driver.getMobileNumber(), driver.getUserName(), driver.getLicenseNumber(), driver.getProfileImage(), driver.getDriverStatus().getDisplayName(), driver.getLastLogInDate(), driver.getLastLogOutDate()))
                 .collect(Collectors.toList());
     }
 
@@ -128,6 +130,6 @@ public class DriverServiceImpl implements DriverService {
     public DriverDto getDriverById(Integer driverID){
         Driver driver = driverRepository.findById(driverID)
                 .orElseThrow(() -> new EntityNotFoundException("Driver not found with ID: " + driverID));
-        return new DriverDto(driver.getId(), driver.getName(), driver.getEmail(), driver.getMobileNumber(), driver.getUserName(), driver.getLicenseNumber(), driver.getProfileImage(), driver.getDriverStatus().getDisplayName());
+        return new DriverDto(driver.getId(), driver.getName(), driver.getEmail(), driver.getMobileNumber(), driver.getUserName(), driver.getLicenseNumber(), driver.getProfileImage(), driver.getDriverStatus().getDisplayName(), driver.getLastLogInDate(), driver.getLastLogOutDate());
     }
 }
