@@ -41,4 +41,9 @@ public class DriverController {
         return new ResponseUtil(200, "success", driverService.deleteDriver(driverID));
     }
 
+    @GetMapping("/nearestDrivers")
+    public ResponseUtil deleteDriver(@RequestParam double userLatitude, @RequestParam double userLongitude) {
+        return new ResponseUtil(200, "success", driverService.getNearestDrivers(userLatitude, userLongitude));
+    }
+
 }
