@@ -10,6 +10,7 @@ import com.app.TaxiReservation.repository.DriverRepository;
 import com.app.TaxiReservation.service.DriverService;
 import com.app.TaxiReservation.util.DistanceCalculation;
 import com.app.TaxiReservation.util.Status.DriverStatus;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -115,5 +116,11 @@ public class DriverServiceImpl implements DriverService {
         return all.stream()
                 .map(driver -> new DriverDto(driver.getId(), driver.getName(), driver.getEmail(), driver.getMobileNumber(), driver.getUserName(), driver.getLicenseNumber(), driver.getProfileImage(), driver.getDriverStatus().getDisplayName()))
                 .collect(Collectors.toList());
+    }
+
+    public DriverDto getDriverById(Integer driverID){
+        Driver driver = driverRepository.findById(driverID)
+                .orElseThrow(() -> new EntityNotFoundException("Driver not found with ID: " + driverID));
+        return new DriverDto(driver.getId(), driver.getName(), driver.getEmail(), driver.getMobileNumber(), driver.getUserName(), driver.getLicenseNumber(), driver.getProfileImage(), driver.getDriverStatus().getDisplayName());
     }
 }
