@@ -5,6 +5,7 @@ import com.app.TaxiReservation.service.DriverService;
 import com.app.TaxiReservation.util.ResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,6 +34,11 @@ public class DriverController {
     @GetMapping("/search")
     public ResponseUtil getById(@RequestParam String name) {
         return new ResponseUtil(200, "success", driverService.search(name));
+    }
+
+    @DeleteMapping()
+    public ResponseUtil deleteDriver(@RequestParam Integer driverID) {
+        return new ResponseUtil(200, "success", driverService.deleteDriver(driverID));
     }
 
 }

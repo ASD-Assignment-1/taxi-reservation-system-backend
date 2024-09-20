@@ -52,7 +52,7 @@ public class ReservationServiceImpl implements ReservationService {
             User user = userRepository.findById(reservationDto.getUserId()).get();
             taxiReservation.setUser(user);
 
-            Driver byUserName = driverRepository.findByUserName(reservationDto.getDriverUserName());
+            Driver byUserName = driverRepository.findByUserNameAndActiveTrue(reservationDto.getDriverUserName());
 
             taxiReservation.setDriver(byUserName);
             taxiReservation.setReveredTime(LocalDateTime.now());
@@ -138,7 +138,7 @@ public class ReservationServiceImpl implements ReservationService {
     private void resetDriverStatus(Integer driverID , DriverStatus driverStatus){
         try {
 
-            Driver driver = driverRepository.findById(driverID).get();
+            Driver driver = driverRepository.findByIdAndActive(driverID, true).get();
             driver.setDriverStatus(driverStatus);
             driverRepository.save(driver);
 

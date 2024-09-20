@@ -12,4 +12,5 @@ public interface DriverService {
     List<DriverDto> getAllDrivers(String driverStatus);
     DriverDto getDriverById(Integer driverID);
     List<DriverDto> search(String userName);
+    boolean deleteDriver(Integer driverID);
 }

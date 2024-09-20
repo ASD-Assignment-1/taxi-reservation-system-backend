@@ -44,7 +44,7 @@ public class AdminServiceImpl implements AdminService {
     public boolean reserveTaxiManually(AdminReservationDto adminReservationDto){
         try {
 
-            Driver byUserName = driverRepository.findByUserNameAndDriverStatus(adminReservationDto.getDriverUserName(), DriverStatus.AV);
+            Driver byUserName = driverRepository.findByUserNameAndDriverStatusAndActive(adminReservationDto.getDriverUserName(), DriverStatus.AV, true);
 
             if (byUserName == null) {
                 throw new RuntimeException("This Driver is not available");

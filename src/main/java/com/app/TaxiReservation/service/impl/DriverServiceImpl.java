@@ -4,6 +4,7 @@ import com.app.TaxiReservation.dto.DistanceDto.DistanceResponseDto;
 import com.app.TaxiReservation.dto.DriverDto;
 import com.app.TaxiReservation.dto.LoginInputDto;
 import com.app.TaxiReservation.entity.Driver;
+import com.app.TaxiReservation.exception.RuntimeException;
 import com.app.TaxiReservation.exception.SQLException;
 import com.app.TaxiReservation.exception.UserNotExistException;
 import com.app.TaxiReservation.repository.DriverRepository;
@@ -11,6 +12,7 @@ import com.app.TaxiReservation.service.DriverService;
 import com.app.TaxiReservation.util.DistanceCalculation;
 import com.app.TaxiReservation.util.Status.DriverStatus;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,7 +54,7 @@ public class DriverServiceImpl implements DriverService {
     @Override
     public DriverDto login(LoginInputDto loginInputDto) {
         try {
-            Driver byUserName = driverRepository.findByUserName(loginInputDto.getUserName());
+            Driver byUserName = driverRepository.findByUserNameAndActiveTrue(loginInputDto.getUserName());
             if (byUserName.getPassword().equals(loginInputDto.getPassword())) {
                 byUserName.setLastLogInDate(LocalDateTime.now());
                 byUserName.setLongitude(loginInputDto.getLongitude());
@@ -128,7 +130,7 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     public DriverDto getDriverById(Integer driverID) {
-        Driver driver = driverRepository.findById(driverID)
+        Driver driver = driverRepository.findByIdAndActive(driverID, true)
                 .orElseThrow(() -> new EntityNotFoundException("Driver not found with ID: " + driverID));
         return new DriverDto(driver.getId(), driver.getName(), driver.getEmail(), driver.getMobileNumber(), driver.getUserName(), driver.getLicenseNumber(), driver.getProfileImage(), driver.getDriverStatus().getDisplayName(), driver.getLastLogInDate(), driver.getLastLogOutDate());
     }
@@ -149,5 +151,16 @@ public class DriverServiceImpl implements DriverService {
                         driver.getLastLogInDate(),
                         driver.getLastLogOutDate()))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    @Override
+    public boolean deleteDriver(Integer driverID){
+        try {
+            driverRepository.deactivateDriver(driverID);
+            return true;
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
     }
 }

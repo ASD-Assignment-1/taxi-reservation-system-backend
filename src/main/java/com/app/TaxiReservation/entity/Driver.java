@@ -57,6 +57,9 @@ public class Driver {
     @Column(name = "profileImage", columnDefinition = "TEXT")
     private String profileImage;
 
+    @Column(name = "active", nullable = false)
+    private boolean active;
+
     @OneToMany(mappedBy = "driver")
     private List<TaxiReservation> taxiReservation;
 
