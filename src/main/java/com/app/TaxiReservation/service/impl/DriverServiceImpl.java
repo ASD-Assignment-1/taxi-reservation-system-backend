@@ -107,10 +107,16 @@ public class DriverServiceImpl implements DriverService {
     @Override
     public List<DriverDto> getAllDrivers(String driverStatus){
         // Convert the display name to the corresponding DriverStatus enum
-        DriverStatus status = Arrays.stream(DriverStatus.values())
-                .filter(s -> s.getDisplayName().equalsIgnoreCase(driverStatus))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Invalid Driver Status: " + driverStatus));
+        DriverStatus status;
+        if (driverStatus.equalsIgnoreCase("All")) {
+            status = null;
+        }else {
+            status = Arrays.stream(DriverStatus.values())
+                    .filter(s -> s.getDisplayName().equalsIgnoreCase(driverStatus))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid Driver Status: " + driverStatus));
+        }
+
 
         List<Driver> all = driverRepository.findAllByDriverStatus(status);
         return all.stream()
@@ -118,6 +124,7 @@ public class DriverServiceImpl implements DriverService {
                 .collect(Collectors.toList());
     }
 
+    @Override
     public DriverDto getDriverById(Integer driverID){
         Driver driver = driverRepository.findById(driverID)
                 .orElseThrow(() -> new EntityNotFoundException("Driver not found with ID: " + driverID));
