@@ -30,4 +30,9 @@ public class DriverController {
         return new ResponseUtil(200, "success", driverService.getDriverById(id));
     }
 
+    @GetMapping("/search")
+    public ResponseUtil getById(@RequestParam String name) {
+        return new ResponseUtil(200, "success", driverService.search(name));
+    }
+
 }

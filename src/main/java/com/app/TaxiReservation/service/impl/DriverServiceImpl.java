@@ -107,12 +107,12 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public List<DriverDto> getAllDrivers(String driverStatus){
+    public List<DriverDto> getAllDrivers(String driverStatus) {
         // Convert the display name to the corresponding DriverStatus enum
         DriverStatus status;
         if (driverStatus.equalsIgnoreCase("All")) {
             status = null;
-        }else {
+        } else {
             status = Arrays.stream(DriverStatus.values())
                     .filter(s -> s.getDisplayName().equalsIgnoreCase(driverStatus))
                     .findFirst()
@@ -127,9 +127,27 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public DriverDto getDriverById(Integer driverID){
+    public DriverDto getDriverById(Integer driverID) {
         Driver driver = driverRepository.findById(driverID)
                 .orElseThrow(() -> new EntityNotFoundException("Driver not found with ID: " + driverID));
         return new DriverDto(driver.getId(), driver.getName(), driver.getEmail(), driver.getMobileNumber(), driver.getUserName(), driver.getLicenseNumber(), driver.getProfileImage(), driver.getDriverStatus().getDisplayName(), driver.getLastLogInDate(), driver.getLastLogOutDate());
+    }
+
+    @Override
+    public List<DriverDto> search(String userName) {
+        List<Driver> drivers = driverRepository.findByName(userName);
+        return drivers.stream()
+                .map(driver -> new DriverDto(
+                        driver.getId(),
+                        driver.getName(),
+                        driver.getEmail(),
+                        driver.getMobileNumber(),
+                        driver.getUserName(),
+                        driver.getLicenseNumber(),
+                        driver.getProfileImage(),
+                        driver.getDriverStatus().getDisplayName(),
+                        driver.getLastLogInDate(),
+                        driver.getLastLogOutDate()))
+                .collect(Collectors.toList());
     }
 }

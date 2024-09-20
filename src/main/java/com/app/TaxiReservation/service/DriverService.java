@@ -11,4 +11,5 @@ public interface DriverService {
     List<DriverDto> getNearestDrivers(double userLatitude, double userLongitude);
     List<DriverDto> getAllDrivers(String driverStatus);
     DriverDto getDriverById(Integer driverID);
+    List<DriverDto> search(String userName);
 }
