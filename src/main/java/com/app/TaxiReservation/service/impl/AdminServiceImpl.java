@@ -1,9 +1,11 @@
 package com.app.TaxiReservation.service.impl;
 
 import com.app.TaxiReservation.dto.AdminReservationDto;
+import com.app.TaxiReservation.dto.ReservationDetailsDto;
 import com.app.TaxiReservation.dto.ReservationDto;
 import com.app.TaxiReservation.dto.UserDto;
 import com.app.TaxiReservation.entity.Driver;
+import com.app.TaxiReservation.entity.TaxiReservation;
 import com.app.TaxiReservation.entity.User;
 import com.app.TaxiReservation.exception.RuntimeException;
 import com.app.TaxiReservation.repository.DriverRepository;
@@ -19,7 +21,12 @@ import com.app.TaxiReservation.util.Status.ReservationStatus;
 import com.app.TaxiReservation.util.Status.UserStatus;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AdminServiceImpl implements AdminService {
@@ -101,6 +108,31 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public long getUserCountExcludingAdminAndDriver() {
         return userRepository.countUsersExcludingAdminAndDriver(Role.ADMIN, Role.DRIVER);
+    }
+
+    public List<ReservationDetailsDto> getLastReservation() {
+        Pageable pageable = PageRequest.of(0, 5);
+        List<TaxiReservation> taxiReservationList = reservationRepository.findLastReservations(pageable);
+        return taxiReservationList.stream()
+                .map(taxiReservation -> new ReservationDetailsDto(
+                        taxiReservation.getId(),
+                        new UserDto(
+                                taxiReservation.getUser().getId(),
+                                taxiReservation.getUser().getName(),
+                                taxiReservation.getUser().getEmail(),
+                                taxiReservation.getUser().getMobileNumber(),
+                                taxiReservation.getUser().getUserName(),
+                                taxiReservation.getUser().getRole()
+                        ),
+                        taxiReservation.getReveredTime(),
+                        taxiReservation.getPaymentAmount(),
+                        taxiReservation.getPickupLatitude(),
+                        taxiReservation.getPickupLongitude(),
+                        taxiReservation.getDropLatitude(),
+                        taxiReservation.getDropLongitude(),
+                        taxiReservation.getStatus()
+                ))
+                .collect(Collectors.toList());
     }
 
 }
