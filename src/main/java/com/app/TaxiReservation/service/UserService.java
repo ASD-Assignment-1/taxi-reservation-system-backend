@@ -8,9 +8,14 @@ import com.app.TaxiReservation.dto.UserDto;
 import java.util.List;
 
 
-public interface  UserService {
+public interface UserService {
     boolean userRegistration(UserDto userDto);
+
     LoginUserOutputDto login(LoginInputDto loginInputDto);
+
     boolean rateDriver(RatingDto ratingDto);
+
     List<UserDto> getAllActiveUsers();
+
+    List<UserDto> search(String userName);
 }

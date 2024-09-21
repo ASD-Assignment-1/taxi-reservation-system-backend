@@ -61,5 +61,10 @@ public class UserController {
         return new ResponseUtil(200, "success", userService.getAllActiveUsers());
     }
 
+    @GetMapping("/search")
+    public ResponseUtil searchByName(@RequestParam String name) {
+        return new ResponseUtil(200, "success", userService.search(name));
+    }
+
 
 }

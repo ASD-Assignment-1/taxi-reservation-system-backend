@@ -1,10 +1,12 @@
 package com.app.TaxiReservation.service.impl;
 
 
+import com.app.TaxiReservation.dto.DriverDto;
 import com.app.TaxiReservation.dto.LoginInputDto;
 import com.app.TaxiReservation.dto.LoginUserOutputDto;
 import com.app.TaxiReservation.dto.RatingDto;
 import com.app.TaxiReservation.dto.UserDto;
+import com.app.TaxiReservation.entity.Driver;
 import com.app.TaxiReservation.entity.Rating;
 import com.app.TaxiReservation.entity.User;
 import com.app.TaxiReservation.exception.RuntimeException;
@@ -119,6 +121,24 @@ public class UserServiceImpl implements UserService {
                         user.getUserName(),
                         user.getRole()
                 )).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserDto> search(String userName) {
+        try {
+            List<User> users = userRepository.findByName(userName);
+            return users.stream()
+                    .map(user -> new UserDto(
+                            user.getId(),
+                            user.getName(),
+                            user.getEmail(),
+                            user.getMobileNumber(),
+                            user.getUserName(),
+                            user.getRole()))
+                    .collect(Collectors.toList());
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
 

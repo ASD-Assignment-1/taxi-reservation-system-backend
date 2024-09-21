@@ -11,10 +11,17 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User,Integer> {
+public interface UserRepository extends JpaRepository<User, Integer> {
     User findByUserNameAndActiveTrue(String userName);
+
     Optional<User> findByIdAndActiveTrue(Integer userId);
+
     @Query("SELECT COUNT(u) FROM User u WHERE u.role <> :adminRole AND u.role <> :driverRole AND u.active = true")
     long countUsersExcludingAdminAndDriver(@Param("adminRole") Role adminRole, @Param("driverRole") Role driverRole);
+
     List<User> findAllByActiveTrue();
+
+    @Query("SELECT user FROM User user " +
+            "WHERE (:name IS NULL OR user.name LIKE %:name%) AND user.active = true ")
+    List<User> findByName(@Param("name") String name);
 }
