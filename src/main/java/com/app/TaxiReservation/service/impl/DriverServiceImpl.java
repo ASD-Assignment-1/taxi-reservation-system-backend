@@ -3,17 +3,23 @@ package com.app.TaxiReservation.service.impl;
 import com.app.TaxiReservation.dto.DistanceDto.DistanceResponseDto;
 import com.app.TaxiReservation.dto.DriverDto;
 import com.app.TaxiReservation.dto.LoginInputDto;
+import com.app.TaxiReservation.dto.ReservationDetailsDto;
+import com.app.TaxiReservation.dto.UserDto;
 import com.app.TaxiReservation.entity.Driver;
+import com.app.TaxiReservation.entity.TaxiReservation;
 import com.app.TaxiReservation.exception.RuntimeException;
 import com.app.TaxiReservation.exception.SQLException;
 import com.app.TaxiReservation.exception.UserNotExistException;
 import com.app.TaxiReservation.repository.DriverRepository;
+import com.app.TaxiReservation.repository.ReservationRepository;
 import com.app.TaxiReservation.service.DriverService;
 import com.app.TaxiReservation.util.DistanceCalculation;
 import com.app.TaxiReservation.util.Status.DriverStatus;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -30,6 +36,9 @@ public class DriverServiceImpl implements DriverService {
 
     @Autowired
     private DistanceCalculation distanceCalculation;
+
+    @Autowired
+    private ReservationRepository reservationRepository;
 
     @Override
     public boolean saveDriver(DriverDto driverDto) {
@@ -162,6 +171,32 @@ public class DriverServiceImpl implements DriverService {
         }catch (Exception e){
             throw new RuntimeException(e.getMessage());
         }
+    }
+
+    @Override
+    public List<ReservationDetailsDto> getLastReservationWithID(Integer driverId) {
+        Pageable pageable = PageRequest.of(0, 5);
+        List<TaxiReservation> taxiReservationList = reservationRepository.findLastReservationsByDriverId(driverId, pageable);
+        return taxiReservationList.stream()
+                .map(taxiReservation -> new ReservationDetailsDto(
+                        taxiReservation.getId(),
+                        new UserDto(
+                                taxiReservation.getUser().getId(),
+                                taxiReservation.getUser().getName(),
+                                taxiReservation.getUser().getEmail(),
+                                taxiReservation.getUser().getMobileNumber(),
+                                taxiReservation.getUser().getUserName(),
+                                taxiReservation.getUser().getRole()
+                        ),
+                        taxiReservation.getReveredTime(),
+                        taxiReservation.getPaymentAmount(),
+                        taxiReservation.getPickupLatitude(),
+                        taxiReservation.getPickupLongitude(),
+                        taxiReservation.getDropLatitude(),
+                        taxiReservation.getDropLongitude(),
+                        taxiReservation.getStatus()
+                ))
+                .collect(Collectors.toList());
     }
 
 

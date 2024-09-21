@@ -46,4 +46,9 @@ public class DriverController {
         return new ResponseUtil(200, "success", driverService.getNearestDrivers(userLatitude, userLongitude));
     }
 
+    @GetMapping("/reservation")
+    public ResponseUtil getLatestReservation(@RequestParam Integer driverID) {
+        return new ResponseUtil(200, "success", driverService.getLastReservationWithID(driverID));
+    }
+
 }
