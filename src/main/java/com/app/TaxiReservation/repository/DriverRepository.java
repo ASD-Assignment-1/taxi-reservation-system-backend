@@ -1,6 +1,7 @@
 package com.app.TaxiReservation.repository;
 
 import com.app.TaxiReservation.entity.Driver;
+import com.app.TaxiReservation.util.Role;
 import com.app.TaxiReservation.util.Status.DriverStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -29,4 +30,7 @@ public interface DriverRepository extends JpaRepository<Driver, Integer> {
     @Modifying
     @Query("UPDATE Driver d SET d.active = false WHERE d.id = :driverId")
     void deactivateDriver(@Param("driverId") Integer driverId);
+
+    @Query("SELECT COUNT(d) FROM Driver d WHERE d.active = true ")
+    long countAllDrivers();
 }

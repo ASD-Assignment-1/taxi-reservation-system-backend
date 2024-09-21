@@ -55,4 +55,9 @@ public class AdminController {
         return new ResponseUtil(200, "success", adminService.getUserCountExcludingAdminAndDriver());
     }
 
+    @GetMapping("/fullDriverCount")
+    public ResponseUtil getFullDriverCount() {
+        return new ResponseUtil(200, "success", driverService.countAllDrivers());
+    }
+
 }

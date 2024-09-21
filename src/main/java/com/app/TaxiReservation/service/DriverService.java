@@ -16,4 +16,5 @@ public interface DriverService {
     boolean deleteDriver(Integer driverID);
     List<ReservationDetailsDto> getLastReservationWithID(Integer driverId);
     boolean updateDriver(DriverDto driverDto);
+    long countAllDrivers();
 }

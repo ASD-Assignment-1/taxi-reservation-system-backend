@@ -58,6 +58,7 @@ public class DriverServiceImpl implements DriverService {
             driver.setProfileImage(driverDto.getProfileImage());
             driver.setDriverStatus(DriverStatus.AV);
             driver.setLastLogInDate(LocalDateTime.now());
+            driver.setActive(true);
             Driver createdDriver = driverRepository.save(driver);
             sendDriverDetails(createdDriver);
             return true;
@@ -267,6 +268,10 @@ public class DriverServiceImpl implements DriverService {
         driverRepository.save(existingDriver);
 
         return true;
+    }
+
+    public long countAllDrivers(){
+        return driverRepository.countAllDrivers();
     }
 
 
