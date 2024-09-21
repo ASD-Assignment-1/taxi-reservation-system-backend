@@ -20,6 +20,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -40,6 +42,9 @@ public class DriverServiceImpl implements DriverService {
     @Autowired
     private ReservationRepository reservationRepository;
 
+    @Autowired
+    private JavaMailSender javaMailSender;
+
     @Override
     public boolean saveDriver(DriverDto driverDto) {
         try {
@@ -53,10 +58,34 @@ public class DriverServiceImpl implements DriverService {
             driver.setProfileImage(driverDto.getProfileImage());
             driver.setDriverStatus(DriverStatus.AV);
             driver.setLastLogInDate(LocalDateTime.now());
-            driverRepository.save(driver);
+            Driver createdDriver = driverRepository.save(driver);
+            sendDriverDetails(createdDriver);
             return true;
         } catch (Exception e) {
             throw new SQLException(e.getMessage());
+        }
+    }
+
+    private void sendDriverDetails(Driver driver) {
+        try {
+
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(driver.getEmail());
+            message.setSubject("Driver Details");
+
+            String emailBody = "Driver Details:\n" +
+                    "Name: " + driver.getName() + "\n" +
+                    "Email: " + driver.getEmail() + "\n" +
+                    "Mobile Number: " + driver.getMobileNumber() + "\n" +
+                    "Username: " + driver.getUserName() + "\n" +
+                    "password: " + driver.getPassword() + "\n" +
+                    "License Number: " + driver.getLicenseNumber();
+
+            message.setText(emailBody);
+            javaMailSender.send(message);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
         }
     }
 
