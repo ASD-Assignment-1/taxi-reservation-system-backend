@@ -193,11 +193,11 @@ public class DriverServiceImpl implements DriverService {
 
     @Transactional
     @Override
-    public boolean deleteDriver(Integer driverID){
+    public boolean deleteDriver(Integer driverID) {
         try {
             driverRepository.deactivateDriver(driverID);
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
     }
@@ -250,7 +250,12 @@ public class DriverServiceImpl implements DriverService {
             existingDriver.setProfileImage(driverDto.getProfileImage());
         }
         if (driverDto.getStatus() != null && !driverDto.getStatus().trim().isEmpty()) {
-            existingDriver.setDriverStatus(DriverStatus.valueOf(driverDto.getStatus()));
+            String statusString = driverDto.getStatus().trim();
+            try {
+                existingDriver.setDriverStatus(DriverStatus.fromDisplayName(statusString));
+            } catch (IllegalArgumentException e) {
+                throw new RuntimeException(e.getMessage());
+            }
         }
         if (driverDto.getLastLogInDate() != null) {
             existingDriver.setLastLogInDate(driverDto.getLastLogInDate());

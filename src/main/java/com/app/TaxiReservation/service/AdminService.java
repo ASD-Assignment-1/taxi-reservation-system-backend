@@ -6,4 +6,5 @@ public interface AdminService {
     boolean reserveTaxiManually(AdminReservationDto adminReservationDto);
     long getAllOngoingReservations();
     double getAllFullTotalIncome();
+    long getUserCountExcludingAdminAndDriver();
 }

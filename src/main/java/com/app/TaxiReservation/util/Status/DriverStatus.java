@@ -13,4 +13,13 @@ public enum DriverStatus {
     public String getDisplayName() {
         return displayName;
     }
+
+    public static DriverStatus fromDisplayName(String displayName) {
+        for (DriverStatus status : values()) {
+            if (status.getDisplayName().equalsIgnoreCase(displayName)) {
+                return status;
+            }
+        }
+        throw new IllegalArgumentException("No matching DriverStatus for display name: " + displayName);
+    }
 }

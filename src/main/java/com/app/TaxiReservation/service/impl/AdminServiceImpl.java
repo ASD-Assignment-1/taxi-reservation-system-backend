@@ -93,8 +93,14 @@ public class AdminServiceImpl implements AdminService {
        return reservationRepository.countAllByStatus(ReservationStatus.START);
     }
 
+    @Override
     public double getAllFullTotalIncome(){
         return paymentRepository.sumAmountByPaymentStatus(PaymentStatus.DONE);
+    }
+
+    @Override
+    public long getUserCountExcludingAdminAndDriver() {
+        return userRepository.countUsersExcludingAdminAndDriver(Role.ADMIN, Role.DRIVER);
     }
 
 }

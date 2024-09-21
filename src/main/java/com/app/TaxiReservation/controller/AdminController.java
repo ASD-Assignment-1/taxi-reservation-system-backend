@@ -50,4 +50,9 @@ public class AdminController {
         return new ResponseUtil(200, "success", adminService.getAllFullTotalIncome());
     }
 
+    @GetMapping("/fullUserCount")
+    public ResponseUtil getFullUserCount() {
+        return new ResponseUtil(200, "success", adminService.getUserCountExcludingAdminAndDriver());
+    }
+
 }
