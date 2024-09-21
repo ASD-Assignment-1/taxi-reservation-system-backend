@@ -1,5 +1,6 @@
 package com.app.TaxiReservation.controller;
 
+import com.app.TaxiReservation.dto.DriverDto;
 import com.app.TaxiReservation.dto.LoginInputDto;
 import com.app.TaxiReservation.service.DriverService;
 import com.app.TaxiReservation.util.ResponseUtil;
@@ -49,6 +50,11 @@ public class DriverController {
     @GetMapping("/reservation")
     public ResponseUtil getLatestReservation(@RequestParam Integer driverID) {
         return new ResponseUtil(200, "success", driverService.getLastReservationWithID(driverID));
+    }
+
+    @PostMapping("/update")
+    public ResponseUtil login(@RequestBody DriverDto driverDto) {
+        return new ResponseUtil(200, "success", driverService.updateDriver(driverDto));
     }
 
 }

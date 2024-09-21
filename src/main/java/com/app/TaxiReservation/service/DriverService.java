@@ -15,4 +15,5 @@ public interface DriverService {
     List<DriverDto> search(String userName);
     boolean deleteDriver(Integer driverID);
     List<ReservationDetailsDto> getLastReservationWithID(Integer driverId);
+    boolean updateDriver(DriverDto driverDto);
 }

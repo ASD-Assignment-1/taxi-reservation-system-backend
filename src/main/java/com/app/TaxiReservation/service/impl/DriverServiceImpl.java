@@ -199,5 +199,41 @@ public class DriverServiceImpl implements DriverService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    public boolean updateDriver(DriverDto driverDto) {
+        Driver existingDriver = driverRepository.findById(driverDto.getId())
+                .orElseThrow(() -> new RuntimeException("Driver not found"));
+
+        // Update non-null fields
+        if (driverDto.getName() != null && !driverDto.getName().trim().isEmpty()) {
+            existingDriver.setName(driverDto.getName());
+        }
+        if (driverDto.getEmail() != null && !driverDto.getEmail().trim().isEmpty()) {
+            existingDriver.setEmail(driverDto.getEmail());
+        }
+        if (driverDto.getMobileNumber() != null && !driverDto.getMobileNumber().trim().isEmpty()) {
+            existingDriver.setMobileNumber(driverDto.getMobileNumber());
+        }
+        if (driverDto.getLicenseNumber() != null && !driverDto.getLicenseNumber().trim().isEmpty()) {
+            existingDriver.setLicenseNumber(driverDto.getLicenseNumber());
+        }
+        if (driverDto.getProfileImage() != null && !driverDto.getProfileImage().trim().isEmpty()) {
+            existingDriver.setProfileImage(driverDto.getProfileImage());
+        }
+        if (driverDto.getStatus() != null && !driverDto.getStatus().trim().isEmpty()) {
+            existingDriver.setDriverStatus(DriverStatus.valueOf(driverDto.getStatus()));
+        }
+        if (driverDto.getLastLogInDate() != null) {
+            existingDriver.setLastLogInDate(driverDto.getLastLogInDate());
+        }
+        if (driverDto.getLastLogOutDate() != null) {
+            existingDriver.setLastLogOutDate(driverDto.getLastLogOutDate());
+        }
+
+        driverRepository.save(existingDriver);
+
+        return true;
+    }
+
 
 }
