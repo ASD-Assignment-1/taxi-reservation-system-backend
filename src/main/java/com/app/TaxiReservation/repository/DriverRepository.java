@@ -27,10 +27,6 @@ public interface DriverRepository extends JpaRepository<Driver, Integer> {
             "WHERE (:name IS NULL OR d.name LIKE %:name%) AND d.active = true ")
     List<Driver> findByName(@Param("name") String name);
 
-    @Modifying
-    @Query("UPDATE Driver d SET d.active = false WHERE d.id = :driverId")
-    void deactivateDriver(@Param("driverId") Integer driverId);
-
     @Query("SELECT COUNT(d) FROM Driver d WHERE d.active = true ")
     long countAllDrivers();
 }

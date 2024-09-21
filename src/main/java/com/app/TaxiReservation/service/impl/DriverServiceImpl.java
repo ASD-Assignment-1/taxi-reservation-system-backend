@@ -196,7 +196,10 @@ public class DriverServiceImpl implements DriverService {
     @Override
     public boolean deleteDriver(Integer driverID) {
         try {
-            driverRepository.deactivateDriver(driverID);
+            Driver driver = driverRepository.findByIdAndActive(driverID, true)
+                    .orElseThrow(() -> new RuntimeException("cannot find the driver " + driverID));
+            driver.setActive(false);
+            driverRepository.save(driver);
             return true;
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
