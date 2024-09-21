@@ -56,4 +56,10 @@ public class UserController {
         return new ResponseUtil(200, "success", userService.rateDriver(ratingDto));
     }
 
+    @GetMapping("/allUsers")
+    public ResponseUtil getAllActiveUsers() {
+        return new ResponseUtil(200, "success", userService.getAllActiveUsers());
+    }
+
+
 }

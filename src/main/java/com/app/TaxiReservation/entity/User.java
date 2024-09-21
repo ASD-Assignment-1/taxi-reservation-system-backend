@@ -48,6 +48,9 @@ public class User {
     @Column(name = "lastLogOutDate")
     private LocalDateTime lastLogOutDate;
 
+    @Column(name = "active", nullable = false)
+    private boolean active;
+
     @OneToOne(mappedBy = "user")
     private TaxiReservation taxiReservation;
 

@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -56,7 +58,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public LoginUserOutputDto login(LoginInputDto loginInputDto) {
         try {
-            User byUserName = userRepository.findByUserName(loginInputDto.getUserName());
+            User byUserName = userRepository.findByUserNameAndActiveTrue(loginInputDto.getUserName());
             if (byUserName.getPassword().equals(loginInputDto.getPassword())) {
                 byUserName.setLastLogInDate(LocalDateTime.now());
                 userRepository.save(byUserName);
@@ -96,7 +98,7 @@ public class UserServiceImpl implements UserService {
         try {
 
             Rating rating = new Rating();
-            rating.setUser(userRepository.findById(ratingDto.getUserID()).get());
+            rating.setUser(userRepository.findByIdAndActiveTrue(ratingDto.getUserID()).get());
             rating.setDriver(driverRepository.findById(ratingDto.getDriverID()).get());
             rating.setScore(ratingDto.getScore());
             rating.setReview(ratingDto.getReview());
@@ -105,6 +107,18 @@ public class UserServiceImpl implements UserService {
         }catch (Exception e){
             throw new RuntimeException(e.getMessage());
         }
+    }
+
+    public List<UserDto> getAllActiveUsers(){
+        return userRepository.findAllByActiveTrue().stream()
+                .map(user -> new UserDto(
+                        user.getId(),
+                        user.getName(),
+                        user.getEmail(),
+                        user.getMobileNumber(),
+                        user.getUserName(),
+                        user.getRole()
+                )).collect(Collectors.toList());
     }
 
 

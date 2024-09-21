@@ -49,7 +49,7 @@ public class ReservationServiceImpl implements ReservationService {
         try {
 
             TaxiReservation taxiReservation = new TaxiReservation();
-            User user = userRepository.findById(reservationDto.getUserId()).get();
+            User user = userRepository.findByIdAndActiveTrue(reservationDto.getUserId()).get();
             taxiReservation.setUser(user);
 
             Driver byUserName = driverRepository.findByUserNameAndActiveTrue(reservationDto.getDriverUserName());
