@@ -141,5 +141,13 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    public boolean deleteUser(Integer userID){
+        User user = userRepository.findByIdAndActiveTrue(userID)
+                .orElseThrow(() -> new RuntimeException("Cannot find user " + userID));
+        user.setActive(false);
+        userRepository.save(user);
+        return true;
+    }
+
 
 }

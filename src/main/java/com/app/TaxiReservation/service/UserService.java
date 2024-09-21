@@ -18,4 +18,6 @@ public interface UserService {
     List<UserDto> getAllActiveUsers();
 
     List<UserDto> search(String userName);
+
+    boolean deleteUser(Integer userID);
 }
