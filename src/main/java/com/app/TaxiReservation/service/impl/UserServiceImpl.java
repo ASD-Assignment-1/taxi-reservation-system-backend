@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserService {
 
+    private final double AmountPerKm = 50;
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -193,6 +194,16 @@ public class UserServiceImpl implements UserService {
 
                     ))
                     .collect(Collectors.toList());
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    public double calculateAmountWithDistance(double latitude1, double longitude1, double latitude2, double longitude2){
+        try {
+            double betweenPoints = getDistanceBetweenPoints(latitude1, longitude1, latitude2, longitude2);
+            double fullAmount = Math.round((betweenPoints * AmountPerKm) * 100.00) / 100.00;
+            return fullAmount;
         }catch (Exception e){
             throw new RuntimeException(e.getMessage());
         }

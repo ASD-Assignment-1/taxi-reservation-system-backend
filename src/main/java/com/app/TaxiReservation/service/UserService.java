@@ -24,4 +24,6 @@ public interface UserService {
     boolean deleteUser(Integer userID);
 
     List<ReservationAgainstUserDto> getLastReservationWithID(Integer userId);
+
+    double calculateAmountWithDistance(double latitude1, double longitude1, double latitude2, double longitude2);
 }
