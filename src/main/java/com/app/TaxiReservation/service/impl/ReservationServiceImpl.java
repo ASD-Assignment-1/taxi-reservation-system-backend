@@ -17,6 +17,7 @@ import com.app.TaxiReservation.util.DistanceCalculation;
 import com.app.TaxiReservation.util.Status.DriverStatus;
 import com.app.TaxiReservation.util.Status.PaymentStatus;
 import com.app.TaxiReservation.util.Status.ReservationStatus;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Service
@@ -113,6 +115,8 @@ public class ReservationServiceImpl implements ReservationService {
         }
     }
 
+    @Transactional
+    @Override
     public void makePayments(Integer reservationID){
 
         try {
@@ -128,6 +132,9 @@ public class ReservationServiceImpl implements ReservationService {
             resetDriverStatus(taxiReservation.getDriver().getId(), DriverStatus.AV);
 
             paymentRepository.save(payment);
+
+            taxiReservation.setStatus(ReservationStatus.END);
+            reservationRepository.save(taxiReservation);
 
         }catch (Exception e){
             throw new RuntimeException(e.getMessage());
@@ -145,6 +152,29 @@ public class ReservationServiceImpl implements ReservationService {
         }catch (Exception e){
             throw new RuntimeException(e.getMessage());
         }
+    }
+
+    @Override
+    public Double getDailyTotal(Integer driverId) {
+        LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
+        LocalDateTime endOfDay = startOfDay.plusDays(1);
+        return paymentRepository.getDailyTotal(driverId, startOfDay, endOfDay);
+    }
+
+    @Override
+    public Double getWeeklyTotal(Integer driverId) {
+        LocalDate startOfWeek = LocalDate.now().with(java.time.DayOfWeek.MONDAY);
+        LocalDateTime startOfWeekDateTime = startOfWeek.atStartOfDay();
+        LocalDateTime endOfDay = LocalDateTime.now();
+        return paymentRepository.getWeeklyTotal(driverId, startOfWeekDateTime, endOfDay);
+    }
+
+    @Override
+    public Double getMonthlyTotal(Integer driverId) {
+        LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
+        LocalDateTime startOfMonthDateTime = startOfMonth.atStartOfDay();
+        LocalDateTime endOfDay = LocalDateTime.now();
+        return paymentRepository.getMonthlyTotal(driverId, startOfMonthDateTime, endOfDay);
     }
 
 }

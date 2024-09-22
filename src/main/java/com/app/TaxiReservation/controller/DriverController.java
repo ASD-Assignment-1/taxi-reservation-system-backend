@@ -3,6 +3,7 @@ package com.app.TaxiReservation.controller;
 import com.app.TaxiReservation.dto.DriverDto;
 import com.app.TaxiReservation.dto.LoginInputDto;
 import com.app.TaxiReservation.service.DriverService;
+import com.app.TaxiReservation.service.ReservationService;
 import com.app.TaxiReservation.util.ResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,6 +22,9 @@ public class DriverController {
 
     @Autowired
     private DriverService driverService;
+
+    @Autowired
+    private ReservationService reservationService;
 
     @PostMapping("/login")
     public ResponseUtil login(@RequestBody LoginInputDto loginInputDto) {
@@ -60,6 +64,21 @@ public class DriverController {
     @PostMapping("/updateStatus")
     public ResponseUtil login(@RequestParam Integer driverID, @RequestParam String status) {
         return new ResponseUtil(200, "success", driverService.changeDriverStatus(driverID, status));
+    }
+
+    @GetMapping("/dailyIncome")
+    public ResponseUtil getDailyTotal(@RequestParam Integer driverID) {
+        return new ResponseUtil(200, "success", reservationService.getDailyTotal(driverID));
+    }
+
+    @GetMapping("/weeklyIncome")
+    public ResponseUtil getWeeklyTotal(@RequestParam Integer driverID) {
+        return new ResponseUtil(200, "success", reservationService.getMonthlyTotal(driverID));
+    }
+
+    @GetMapping("/monthlyIncome")
+    public ResponseUtil getMonthlyTotal(@RequestParam Integer driverID) {
+        return new ResponseUtil(200, "success", reservationService.getMonthlyTotal(driverID));
     }
 
 }
