@@ -199,6 +199,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
     public double calculateAmountWithDistance(double latitude1, double longitude1, double latitude2, double longitude2){
         try {
             double betweenPoints = getDistanceBetweenPoints(latitude1, longitude1, latitude2, longitude2);
