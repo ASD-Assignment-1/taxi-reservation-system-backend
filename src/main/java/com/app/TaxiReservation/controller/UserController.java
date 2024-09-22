@@ -85,4 +85,9 @@ public class UserController {
         return new ResponseUtil(200, "success", userService.calculateAmountWithDistance(latitude1, longitude1, latitude2, longitude2));
     }
 
+    @GetMapping("/allReservation")
+    public ResponseUtil getAllReservation(@RequestParam Integer userID) {
+        return new ResponseUtil(200, "success", userService.getAllReservationWithID(userID));
+    }
+
 }

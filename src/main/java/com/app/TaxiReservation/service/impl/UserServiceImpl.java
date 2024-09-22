@@ -216,5 +216,33 @@ public class UserServiceImpl implements UserService {
         return distanceKm;
     }
 
+    public List<ReservationAgainstUserDto> getAllReservationWithID(Integer userId) {
+        try {
+            List<TaxiReservation> taxiReservationList = reservationRepository.findAllReservationsByUserId(userId);
+            if (taxiReservationList.isEmpty()) {
+                throw new RuntimeException("cannot find the reservation for this user");
+            }
+
+            return taxiReservationList.stream()
+                    .map(taxiReservation -> new ReservationAgainstUserDto(
+                            taxiReservation.getDriver().getName(),
+                            new RatingDto(
+                                    taxiReservation.getRating().getUser().getId(),
+                                    taxiReservation.getRating().getDriver().getId(),
+                                    taxiReservation.getRating().getScore(),
+                                    null,
+                                    taxiReservation.getRating().getReview()
+                            ),
+                            taxiReservation.getReveredTime(),
+                            getDistanceBetweenPoints(taxiReservation.getPickupLatitude(), taxiReservation.getPickupLongitude(), taxiReservation.getDropLatitude(), taxiReservation.getDropLongitude()),
+                            taxiReservation.getPaymentAmount()
+
+                    ))
+                    .collect(Collectors.toList());
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
 
 }
