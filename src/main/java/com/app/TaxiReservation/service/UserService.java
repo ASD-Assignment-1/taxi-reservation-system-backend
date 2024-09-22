@@ -3,6 +3,7 @@ package com.app.TaxiReservation.service;
 import com.app.TaxiReservation.dto.LoginInputDto;
 import com.app.TaxiReservation.dto.LoginUserOutputDto;
 import com.app.TaxiReservation.dto.RatingDto;
+import com.app.TaxiReservation.dto.ReservationAgainstUserDto;
 import com.app.TaxiReservation.dto.ReservationDetailsDto;
 import com.app.TaxiReservation.dto.UserDto;
 
@@ -22,5 +23,5 @@ public interface UserService {
 
     boolean deleteUser(Integer userID);
 
-    List<ReservationDetailsDto> getLastReservationWithID(Integer userId);
+    List<ReservationAgainstUserDto> getLastReservationWithID(Integer userId);
 }

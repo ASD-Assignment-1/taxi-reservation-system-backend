@@ -11,5 +11,6 @@ public class RatingDto {
     private Integer userID;
     private Integer driverID;
     private Integer score;
+    private Integer reservationID;
     private String review;
 }

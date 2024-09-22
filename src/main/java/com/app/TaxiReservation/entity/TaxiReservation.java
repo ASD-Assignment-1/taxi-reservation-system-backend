@@ -62,4 +62,7 @@ public class TaxiReservation {
     @OneToOne(mappedBy = "taxiReservation")
     private Payment payment;
 
+    @OneToOne(mappedBy = "taxiReservation")
+    private Rating rating;
+
 }

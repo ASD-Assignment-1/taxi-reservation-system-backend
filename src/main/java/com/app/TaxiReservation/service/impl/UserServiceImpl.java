@@ -1,12 +1,15 @@
 package com.app.TaxiReservation.service.impl;
 
 
+import com.app.TaxiReservation.dto.DistanceDto.DistanceResponseDto;
 import com.app.TaxiReservation.dto.DriverDto;
 import com.app.TaxiReservation.dto.LoginInputDto;
 import com.app.TaxiReservation.dto.LoginUserOutputDto;
 import com.app.TaxiReservation.dto.RatingDto;
+import com.app.TaxiReservation.dto.ReservationAgainstUserDto;
 import com.app.TaxiReservation.dto.ReservationDetailsDto;
 import com.app.TaxiReservation.dto.UserDto;
+import com.app.TaxiReservation.entity.Driver;
 import com.app.TaxiReservation.entity.Rating;
 import com.app.TaxiReservation.entity.TaxiReservation;
 import com.app.TaxiReservation.entity.User;
@@ -19,6 +22,7 @@ import com.app.TaxiReservation.repository.ReservationRepository;
 import com.app.TaxiReservation.repository.UserRepository;
 import com.app.TaxiReservation.service.DriverService;
 import com.app.TaxiReservation.service.UserService;
+import com.app.TaxiReservation.util.DistanceCalculation;
 import com.app.TaxiReservation.util.Status.UserStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -42,6 +46,8 @@ public class UserServiceImpl implements UserService {
     private RatingRepository ratingRepository;
     @Autowired
     private ReservationRepository reservationRepository;
+    @Autowired
+    private DistanceCalculation distanceCalculation;
 
     @Override
     public boolean userRegistration(UserDto userDto) {
@@ -106,8 +112,15 @@ public class UserServiceImpl implements UserService {
         try {
 
             Rating rating = new Rating();
-            rating.setUser(userRepository.findByIdAndActiveTrue(ratingDto.getUserID()).get());
-            rating.setDriver(driverRepository.findById(ratingDto.getDriverID()).get());
+            User user = userRepository.findByIdAndActiveTrue(ratingDto.getUserID())
+                    .orElseThrow(() -> new RuntimeException("cannot find user"));
+            rating.setUser(user);
+            Driver driver = driverRepository.findById(ratingDto.getDriverID())
+                    .orElseThrow(() -> new RuntimeException("cannot find the driver"));
+            rating.setDriver(driver);
+            TaxiReservation taxiReservation = reservationRepository.findById(ratingDto.getReservationID())
+                    .orElseThrow(() -> new RuntimeException("cannot find the reservation"));
+            rating.setTaxiReservation(taxiReservation);
             rating.setScore(ratingDto.getScore());
             rating.setReview(ratingDto.getReview());
             ratingRepository.save(rating);
@@ -156,34 +169,39 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<ReservationDetailsDto> getLastReservationWithID(Integer userId) {
-        Pageable pageable = PageRequest.of(0, 5);
-        List<TaxiReservation> taxiReservationList = reservationRepository.findLastReservationsByUserId(userId, pageable);
-        return taxiReservationList.stream()
-                .map(taxiReservation -> new ReservationDetailsDto(
-                        taxiReservation.getId(),
-                        null,
-                        new DriverDto(
-                                taxiReservation.getDriver().getId(),
-                                taxiReservation.getDriver().getName(),
-                                taxiReservation.getDriver().getEmail(),
-                                taxiReservation.getDriver().getMobileNumber(),
-                                taxiReservation.getDriver().getUserName(),
-                                taxiReservation.getDriver().getLicenseNumber(),
-                                taxiReservation.getDriver().getProfileImage(),
-                                taxiReservation.getDriver().getDriverStatus().getDisplayName(),
-                                taxiReservation.getDriver().getLastLogInDate(),
-                                taxiReservation.getDriver().getLastLogOutDate()
-                        ),
-                        taxiReservation.getReveredTime(),
-                        taxiReservation.getPaymentAmount(),
-                        taxiReservation.getPickupLatitude(),
-                        taxiReservation.getPickupLongitude(),
-                        taxiReservation.getDropLatitude(),
-                        taxiReservation.getDropLongitude(),
-                        taxiReservation.getStatus()
-                ))
-                .collect(Collectors.toList());
+    public List<ReservationAgainstUserDto> getLastReservationWithID(Integer userId) {
+        try {
+            Pageable pageable = PageRequest.of(0, 5);
+            List<TaxiReservation> taxiReservationList = reservationRepository.findLastReservationsByUserId(userId, pageable);
+            if (taxiReservationList.isEmpty()) {
+                throw new RuntimeException("cannot find the reservation for this user");
+            }
+
+            return taxiReservationList.stream()
+                    .map(taxiReservation -> new ReservationAgainstUserDto(
+                            taxiReservation.getDriver().getName(),
+                            new RatingDto(
+                                    taxiReservation.getRating().getUser().getId(),
+                                    taxiReservation.getRating().getDriver().getId(),
+                                    taxiReservation.getRating().getScore(),
+                                    null,
+                                    taxiReservation.getRating().getReview()
+                            ),
+                            taxiReservation.getReveredTime(),
+                            getDistanceBetweenPoints(taxiReservation.getPickupLatitude(), taxiReservation.getPickupLongitude(), taxiReservation.getDropLatitude(), taxiReservation.getDropLongitude()),
+                            taxiReservation.getPaymentAmount()
+
+                    ))
+                    .collect(Collectors.toList());
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    private double getDistanceBetweenPoints(double latitude1, double longitude1, double latitude2, double longitude2){
+        DistanceResponseDto roadDistance = distanceCalculation.getRoadDistance(latitude1, longitude1, latitude2, longitude2);
+        double distanceKm = roadDistance.getPaths().get(0).getDistance() / 1000.0;
+        return distanceKm;
     }
 
 
