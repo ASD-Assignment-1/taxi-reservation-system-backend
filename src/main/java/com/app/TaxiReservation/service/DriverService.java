@@ -30,4 +30,6 @@ public interface DriverService {
     boolean changeDriverStatus(Integer driverID, String status);
 
     ReservationDetailsDto getOngoingReservation(Integer driverID);
+
+    List<ReservationDetailsDto> getAllReservationByID(Integer driverId);
 }

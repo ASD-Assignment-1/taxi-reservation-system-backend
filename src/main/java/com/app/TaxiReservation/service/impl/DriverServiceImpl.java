@@ -323,5 +323,33 @@ public class DriverServiceImpl implements DriverService {
 
     }
 
+    public List<ReservationDetailsDto> getAllReservationByID(Integer driverId) {
+        List<TaxiReservation> taxiReservationList = reservationRepository.findAllByDriverID(driverId);
+        if (taxiReservationList.isEmpty()) {
+            throw new RuntimeException("No any reservation to this driver");
+        }
+        return taxiReservationList.stream()
+                .map(taxiReservation -> new ReservationDetailsDto(
+                        taxiReservation.getId(),
+                        new UserDto(
+                                taxiReservation.getUser().getId(),
+                                taxiReservation.getUser().getName(),
+                                taxiReservation.getUser().getEmail(),
+                                taxiReservation.getUser().getMobileNumber(),
+                                taxiReservation.getUser().getUserName(),
+                                taxiReservation.getUser().getRole()
+                        ),
+                        null,
+                        taxiReservation.getReveredTime(),
+                        taxiReservation.getPaymentAmount(),
+                        taxiReservation.getPickupLatitude(),
+                        taxiReservation.getPickupLongitude(),
+                        taxiReservation.getDropLatitude(),
+                        taxiReservation.getDropLongitude(),
+                        taxiReservation.getStatus()
+                ))
+                .collect(Collectors.toList());
+    }
+
 
 }
