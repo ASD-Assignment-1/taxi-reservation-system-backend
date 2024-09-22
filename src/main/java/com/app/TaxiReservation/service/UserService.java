@@ -28,4 +28,6 @@ public interface UserService {
     double calculateAmountWithDistance(double latitude1, double longitude1, double latitude2, double longitude2);
 
     List<ReservationAgainstUserDto> getAllReservationWithID(Integer userId);
+
+    boolean updateUser(UserDto userDto);
 }

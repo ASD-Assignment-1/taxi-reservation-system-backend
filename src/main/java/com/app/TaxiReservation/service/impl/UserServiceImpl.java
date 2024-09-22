@@ -244,5 +244,27 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    public boolean updateUser(UserDto userDto){
+
+        User existingUser = userRepository.findById(userDto.getId())
+                .orElseThrow(() -> new RuntimeException("cannot find user " + userDto.getId()));
+
+        if (userDto.getName() != null && !userDto.getName().trim().isEmpty()) {
+            existingUser.setName(userDto.getName());
+        }
+
+        if (userDto.getEmail() != null && !userDto.getEmail().trim().isEmpty()) {
+            existingUser.setEmail(userDto.getEmail());
+        }
+
+        if (userDto.getMobileNumber() != null && !userDto.getMobileNumber().trim().isEmpty()) {
+            existingUser.setMobileNumber(userDto.getMobileNumber());
+        }
+
+        userRepository.save(existingUser);
+        return true;
+
+    }
+
 
 }

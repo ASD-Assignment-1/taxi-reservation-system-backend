@@ -90,4 +90,9 @@ public class UserController {
         return new ResponseUtil(200, "success", userService.getAllReservationWithID(userID));
     }
 
+    @PostMapping("/update")
+    public ResponseUtil updateUser(@RequestBody UserDto userDto) {
+        return new ResponseUtil(200, "success", userService.updateUser(userDto));
+    }
+
 }
