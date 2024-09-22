@@ -5,20 +5,24 @@ import com.app.TaxiReservation.dto.DriverDto;
 import com.app.TaxiReservation.dto.LoginInputDto;
 import com.app.TaxiReservation.dto.LoginUserOutputDto;
 import com.app.TaxiReservation.dto.RatingDto;
+import com.app.TaxiReservation.dto.ReservationDetailsDto;
 import com.app.TaxiReservation.dto.UserDto;
-import com.app.TaxiReservation.entity.Driver;
 import com.app.TaxiReservation.entity.Rating;
+import com.app.TaxiReservation.entity.TaxiReservation;
 import com.app.TaxiReservation.entity.User;
 import com.app.TaxiReservation.exception.RuntimeException;
 import com.app.TaxiReservation.exception.SQLException;
 import com.app.TaxiReservation.exception.UserNotExistException;
 import com.app.TaxiReservation.repository.DriverRepository;
 import com.app.TaxiReservation.repository.RatingRepository;
+import com.app.TaxiReservation.repository.ReservationRepository;
 import com.app.TaxiReservation.repository.UserRepository;
 import com.app.TaxiReservation.service.DriverService;
 import com.app.TaxiReservation.service.UserService;
 import com.app.TaxiReservation.util.Status.UserStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -36,6 +40,8 @@ public class UserServiceImpl implements UserService {
     private DriverRepository driverRepository;
     @Autowired
     private RatingRepository ratingRepository;
+    @Autowired
+    private ReservationRepository reservationRepository;
 
     @Override
     public boolean userRegistration(UserDto userDto) {
@@ -147,6 +153,37 @@ public class UserServiceImpl implements UserService {
         user.setActive(false);
         userRepository.save(user);
         return true;
+    }
+
+    @Override
+    public List<ReservationDetailsDto> getLastReservationWithID(Integer userId) {
+        Pageable pageable = PageRequest.of(0, 5);
+        List<TaxiReservation> taxiReservationList = reservationRepository.findLastReservationsByUserId(userId, pageable);
+        return taxiReservationList.stream()
+                .map(taxiReservation -> new ReservationDetailsDto(
+                        taxiReservation.getId(),
+                        null,
+                        new DriverDto(
+                                taxiReservation.getDriver().getId(),
+                                taxiReservation.getDriver().getName(),
+                                taxiReservation.getDriver().getEmail(),
+                                taxiReservation.getDriver().getMobileNumber(),
+                                taxiReservation.getDriver().getUserName(),
+                                taxiReservation.getDriver().getLicenseNumber(),
+                                taxiReservation.getDriver().getProfileImage(),
+                                taxiReservation.getDriver().getDriverStatus().getDisplayName(),
+                                taxiReservation.getDriver().getLastLogInDate(),
+                                taxiReservation.getDriver().getLastLogOutDate()
+                        ),
+                        taxiReservation.getReveredTime(),
+                        taxiReservation.getPaymentAmount(),
+                        taxiReservation.getPickupLatitude(),
+                        taxiReservation.getPickupLongitude(),
+                        taxiReservation.getDropLatitude(),
+                        taxiReservation.getDropLongitude(),
+                        taxiReservation.getStatus()
+                ))
+                .collect(Collectors.toList());
     }
 
 

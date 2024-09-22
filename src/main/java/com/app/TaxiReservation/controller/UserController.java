@@ -72,4 +72,9 @@ public class UserController {
         return new ResponseUtil(200, "success", userService.deleteUser(userID));
     }
 
+    @GetMapping("/reservation")
+    public ResponseUtil getLatestReservation(@RequestParam Integer userID) {
+        return new ResponseUtil(200, "success", userService.getLastReservationWithID(userID));
+    }
+
 }

@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 public class ReservationDetailsDto {
     private Integer id;
     private UserDto userDto;
+    private DriverDto driverDto;
     private LocalDateTime reveredTime;
     private double paymentAmount;
     private double pickupLatitude;

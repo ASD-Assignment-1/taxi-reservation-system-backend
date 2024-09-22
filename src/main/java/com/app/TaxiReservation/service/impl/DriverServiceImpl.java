@@ -221,6 +221,7 @@ public class DriverServiceImpl implements DriverService {
                                 taxiReservation.getUser().getUserName(),
                                 taxiReservation.getUser().getRole()
                         ),
+                        null,
                         taxiReservation.getReveredTime(),
                         taxiReservation.getPaymentAmount(),
                         taxiReservation.getPickupLatitude(),

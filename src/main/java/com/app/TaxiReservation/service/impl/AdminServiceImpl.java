@@ -124,6 +124,7 @@ public class AdminServiceImpl implements AdminService {
                                 taxiReservation.getUser().getUserName(),
                                 taxiReservation.getUser().getRole()
                         ),
+                        null,
                         taxiReservation.getReveredTime(),
                         taxiReservation.getPaymentAmount(),
                         taxiReservation.getPickupLatitude(),
