@@ -28,4 +28,6 @@ public interface DriverService {
     long countAllDrivers();
 
     boolean changeDriverStatus(Integer driverID, String status);
+
+    ReservationDetailsDto getOngoingReservation(Integer driverID);
 }

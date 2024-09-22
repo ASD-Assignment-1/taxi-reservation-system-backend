@@ -26,4 +26,7 @@ public interface ReservationRepository extends JpaRepository<TaxiReservation, In
 
     @Query("SELECT r FROM TaxiReservation r  ORDER BY r.reveredTime DESC")
     List<TaxiReservation> findLastReservations(Pageable pageable);
+
+    @Query("SELECT r FROM TaxiReservation r WHERE r.driver.id = :driverId AND r.status =:status ")
+    TaxiReservation findOngoingTripByDriverID(@Param("driverId") Integer driverId, @Param("status") ReservationStatus status);
 }

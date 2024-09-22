@@ -81,4 +81,9 @@ public class DriverController {
         return new ResponseUtil(200, "success", reservationService.getMonthlyTotal(driverID));
     }
 
+    @GetMapping("/ongoingTrip")
+    public ResponseUtil getOngoingTrip(@RequestParam Integer driverID) {
+        return new ResponseUtil(200, "success", driverService.getOngoingReservation(driverID));
+    }
+
 }

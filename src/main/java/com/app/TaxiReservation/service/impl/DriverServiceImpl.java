@@ -4,6 +4,7 @@ import com.app.TaxiReservation.dto.DistanceDto.DistanceResponseDto;
 import com.app.TaxiReservation.dto.DriverDto;
 import com.app.TaxiReservation.dto.LoginInputDto;
 import com.app.TaxiReservation.dto.ReservationDetailsDto;
+import com.app.TaxiReservation.dto.ReservationDto;
 import com.app.TaxiReservation.dto.UserDto;
 import com.app.TaxiReservation.entity.Driver;
 import com.app.TaxiReservation.entity.TaxiReservation;
@@ -15,6 +16,7 @@ import com.app.TaxiReservation.repository.ReservationRepository;
 import com.app.TaxiReservation.service.DriverService;
 import com.app.TaxiReservation.util.DistanceCalculation;
 import com.app.TaxiReservation.util.Status.DriverStatus;
+import com.app.TaxiReservation.util.Status.ReservationStatus;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -286,6 +288,39 @@ public class DriverServiceImpl implements DriverService {
         driver.setDriverStatus(DriverStatus.fromDisplayName(status));
         driverRepository.save(driver);
         return true;
+    }
+
+    @Override
+    public ReservationDetailsDto getOngoingReservation(Integer driverID){
+
+        try {
+            TaxiReservation tripByDriverID = reservationRepository.findOngoingTripByDriverID(driverID, ReservationStatus.START);
+            if (tripByDriverID==null) {
+                throw new RuntimeException("Not any ongoing trip");
+            }
+            return new ReservationDetailsDto(
+                    tripByDriverID.getId(),
+                    new UserDto(
+                            tripByDriverID.getUser().getId(),
+                            tripByDriverID.getUser().getName(),
+                            tripByDriverID.getUser().getEmail(),
+                            tripByDriverID.getUser().getMobileNumber(),
+                            tripByDriverID.getUser().getUserName(),
+                            tripByDriverID.getUser().getRole()
+                    ),
+                    null,
+                    tripByDriverID.getReveredTime(),
+                    tripByDriverID.getPaymentAmount(),
+                    tripByDriverID.getPickupLatitude(),
+                    tripByDriverID.getPickupLongitude(),
+                    tripByDriverID.getDropLatitude(),
+                    tripByDriverID.getDropLongitude(),
+                    tripByDriverID.getStatus()
+            );
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
+
     }
 
 
