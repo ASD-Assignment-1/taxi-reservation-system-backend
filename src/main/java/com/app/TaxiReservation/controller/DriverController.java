@@ -57,4 +57,9 @@ public class DriverController {
         return new ResponseUtil(200, "success", driverService.updateDriver(driverDto));
     }
 
+    @PostMapping("/updateStatus")
+    public ResponseUtil login(@RequestParam Integer driverID, @RequestParam String status) {
+        return new ResponseUtil(200, "success", driverService.changeDriverStatus(driverID, status));
+    }
+
 }

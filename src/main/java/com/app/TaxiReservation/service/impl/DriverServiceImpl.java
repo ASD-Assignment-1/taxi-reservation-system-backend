@@ -274,8 +274,18 @@ public class DriverServiceImpl implements DriverService {
         return true;
     }
 
+    @Override
     public long countAllDrivers(){
         return driverRepository.countAllDrivers();
+    }
+
+    @Override
+    public boolean changeDriverStatus(Integer driverID, String status){
+        Driver driver = driverRepository.findByIdAndActive(driverID, true)
+                .orElseThrow(() -> new RuntimeException("Cannot find the driver " + driverID));
+        driver.setDriverStatus(DriverStatus.fromDisplayName(status));
+        driverRepository.save(driver);
+        return true;
     }
 
 
