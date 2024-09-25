@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,5 +38,8 @@ public interface ReservationRepository extends JpaRepository<TaxiReservation, In
     TaxiReservation findOngoingTripByDriverID(@Param("driverId") Integer driverId, @Param("status") ReservationStatus status);
 
     List<Optional<TaxiReservation>> findByStatus(ReservationStatus status);
+
+    @Query("SELECT r FROM TaxiReservation r WHERE r.reveredTime BETWEEN :fromDate AND :toDate AND r.status='END'")
+    List<TaxiReservation> findReservationFromDateRange(@Param("fromDate") LocalDateTime fromDate,@Param("toDate") LocalDateTime toDate);
 
 }

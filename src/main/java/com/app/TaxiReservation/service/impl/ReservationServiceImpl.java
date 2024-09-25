@@ -26,6 +26,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -211,6 +212,48 @@ public class ReservationServiceImpl implements ReservationService {
                         taxiReservation.get().getDropLongitude(),
                         taxiReservation.get().getStatus(),
                          null
+                ))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ReservationDetailsDto> filterReservation(String fromDate, String toDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
+        List<TaxiReservation> taxiReservationList = reservationRepository.findReservationFromDateRange(LocalDateTime.parse(fromDate, formatter),LocalDateTime.parse(toDate, formatter));
+        return taxiReservationList.stream()
+                .map(taxiReservation -> new ReservationDetailsDto(
+                        taxiReservation.getId(),
+                        new UserDto(
+                                taxiReservation.getUser().getId(),
+                                taxiReservation.getUser().getName(),
+                                taxiReservation.getUser().getEmail(),
+                                taxiReservation.getUser().getMobileNumber(),
+                                taxiReservation.getUser().getUserName(),
+                                taxiReservation.getUser().getRole(),
+                                taxiReservation.getUser().getUserStatus()
+                        ),
+                        new DriverDto(
+                                taxiReservation.getDriver().getName(),
+                                taxiReservation.getDriver().getEmail(),
+                                taxiReservation.getDriver().getMobileNumber(),
+                                taxiReservation.getDriver().getUserName(),
+                                taxiReservation.getDriver().getLicenseNumber()
+                        ),
+                        taxiReservation.getReveredTime(),
+                        taxiReservation.getPaymentAmount(),
+                        taxiReservation.getPickupLatitude(),
+                        taxiReservation.getPickupLongitude(),
+                        taxiReservation.getDropLatitude(),
+                        taxiReservation.getDropLongitude(),
+                        taxiReservation.getStatus(),
+                        taxiReservation.getRating() != null ?
+                                new RatingDto(
+                                        taxiReservation.getRating().getUser().getId(),
+                                        taxiReservation.getRating().getDriver().getId(),
+                                        taxiReservation.getRating().getScore(),
+                                        taxiReservation.getRating().getTaxiReservation().getId(),
+                                        taxiReservation.getRating().getReview()
+                                ) : null
                 ))
                 .collect(Collectors.toList());
     }

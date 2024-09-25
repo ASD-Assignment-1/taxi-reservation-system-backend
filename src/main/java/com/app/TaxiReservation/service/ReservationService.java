@@ -4,6 +4,7 @@ import com.app.TaxiReservation.dto.ReservationAgainstUserDto;
 import com.app.TaxiReservation.dto.ReservationDetailsDto;
 import com.app.TaxiReservation.dto.ReservationDto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ReservationService {
@@ -18,4 +19,6 @@ public interface ReservationService {
     Double getMonthlyTotal(Integer driverId);
 
     List<ReservationDetailsDto> getOngoingReservation();
+
+    List<ReservationDetailsDto> filterReservation(String fromDate, String toDate);
 }
