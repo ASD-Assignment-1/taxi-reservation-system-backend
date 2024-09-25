@@ -1,5 +1,6 @@
 package com.app.TaxiReservation.controller;
 
+import com.app.TaxiReservation.dto.ChangePasswordDto;
 import com.app.TaxiReservation.dto.LoginInputDto;
 import com.app.TaxiReservation.dto.RatingDto;
 import com.app.TaxiReservation.dto.UserDto;
@@ -93,6 +94,11 @@ public class UserController {
     @PostMapping("/update")
     public ResponseUtil updateUser(@RequestBody UserDto userDto) {
         return new ResponseUtil(200, "success", userService.updateUser(userDto));
+    }
+
+    @PostMapping("/changePassword")
+    public ResponseUtil changePassword(@RequestBody ChangePasswordDto changePasswordDto) {
+        return new ResponseUtil(200, "success", userService.changePassword(changePasswordDto));
     }
 
 }

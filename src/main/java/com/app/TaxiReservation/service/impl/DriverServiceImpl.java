@@ -1,13 +1,10 @@
 package com.app.TaxiReservation.service.impl;
 
+import com.app.TaxiReservation.dto.*;
 import com.app.TaxiReservation.dto.DistanceDto.DistanceResponseDto;
-import com.app.TaxiReservation.dto.DriverDto;
-import com.app.TaxiReservation.dto.LoginInputDto;
-import com.app.TaxiReservation.dto.ReservationDetailsDto;
-import com.app.TaxiReservation.dto.ReservationDto;
-import com.app.TaxiReservation.dto.UserDto;
 import com.app.TaxiReservation.entity.Driver;
 import com.app.TaxiReservation.entity.TaxiReservation;
+import com.app.TaxiReservation.entity.User;
 import com.app.TaxiReservation.exception.RuntimeException;
 import com.app.TaxiReservation.exception.SQLException;
 import com.app.TaxiReservation.exception.UserNotExistException;
@@ -221,7 +218,8 @@ public class DriverServiceImpl implements DriverService {
                                 taxiReservation.getUser().getEmail(),
                                 taxiReservation.getUser().getMobileNumber(),
                                 taxiReservation.getUser().getUserName(),
-                                taxiReservation.getUser().getRole()
+                                taxiReservation.getUser().getRole(),
+                                taxiReservation.getUser().getUserStatus()
                         ),
                         null,
                         taxiReservation.getReveredTime(),
@@ -230,7 +228,8 @@ public class DriverServiceImpl implements DriverService {
                         taxiReservation.getPickupLongitude(),
                         taxiReservation.getDropLatitude(),
                         taxiReservation.getDropLongitude(),
-                        taxiReservation.getStatus()
+                        taxiReservation.getStatus(),
+                        null
                 ))
                 .collect(Collectors.toList());
     }
@@ -306,7 +305,8 @@ public class DriverServiceImpl implements DriverService {
                             tripByDriverID.getUser().getEmail(),
                             tripByDriverID.getUser().getMobileNumber(),
                             tripByDriverID.getUser().getUserName(),
-                            tripByDriverID.getUser().getRole()
+                            tripByDriverID.getUser().getRole(),
+                            tripByDriverID.getUser().getUserStatus()
                     ),
                     null,
                     tripByDriverID.getReveredTime(),
@@ -315,7 +315,8 @@ public class DriverServiceImpl implements DriverService {
                     tripByDriverID.getPickupLongitude(),
                     tripByDriverID.getDropLatitude(),
                     tripByDriverID.getDropLongitude(),
-                    tripByDriverID.getStatus()
+                    tripByDriverID.getStatus(),
+                    null
             );
         }catch (Exception e){
             throw new RuntimeException(e.getMessage());
@@ -337,7 +338,8 @@ public class DriverServiceImpl implements DriverService {
                                 taxiReservation.getUser().getEmail(),
                                 taxiReservation.getUser().getMobileNumber(),
                                 taxiReservation.getUser().getUserName(),
-                                taxiReservation.getUser().getRole()
+                                taxiReservation.getUser().getRole(),
+                                taxiReservation.getUser().getUserStatus()
                         ),
                         null,
                         taxiReservation.getReveredTime(),
@@ -346,10 +348,30 @@ public class DriverServiceImpl implements DriverService {
                         taxiReservation.getPickupLongitude(),
                         taxiReservation.getDropLatitude(),
                         taxiReservation.getDropLongitude(),
-                        taxiReservation.getStatus()
+                        taxiReservation.getStatus(),
+                        taxiReservation.getRating() != null ?
+                                new RatingDto(
+                                        taxiReservation.getRating().getUser().getId(),
+                                        taxiReservation.getRating().getDriver().getId(),
+                                        taxiReservation.getRating().getScore(),
+                                        taxiReservation.getRating().getTaxiReservation().getId(),
+                                        taxiReservation.getRating().getReview()
+                                ) : null
                 ))
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public boolean changePassword(ChangePasswordDto changePasswordDto) {
+        Driver existingUser = driverRepository.findById(changePasswordDto.getId())
+                .orElseThrow(() -> new RuntimeException("cannot find user " + changePasswordDto.getId()));
 
+        if (existingUser.getPassword().equals(changePasswordDto.getCurrentPassword())){
+            existingUser.setPassword(changePasswordDto.getNewPassword());
+            driverRepository.save(existingUser);
+            return true;
+        }else {
+            throw new RuntimeException("Current Password is invalid,Please enter your correct password");
+        }
+    }
 }

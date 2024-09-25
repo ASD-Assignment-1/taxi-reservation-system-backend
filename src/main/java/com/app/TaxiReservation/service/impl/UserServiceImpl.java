@@ -1,14 +1,8 @@
 package com.app.TaxiReservation.service.impl;
 
 
+import com.app.TaxiReservation.dto.*;
 import com.app.TaxiReservation.dto.DistanceDto.DistanceResponseDto;
-import com.app.TaxiReservation.dto.DriverDto;
-import com.app.TaxiReservation.dto.LoginInputDto;
-import com.app.TaxiReservation.dto.LoginUserOutputDto;
-import com.app.TaxiReservation.dto.RatingDto;
-import com.app.TaxiReservation.dto.ReservationAgainstUserDto;
-import com.app.TaxiReservation.dto.ReservationDetailsDto;
-import com.app.TaxiReservation.dto.UserDto;
 import com.app.TaxiReservation.entity.Driver;
 import com.app.TaxiReservation.entity.Rating;
 import com.app.TaxiReservation.entity.TaxiReservation;
@@ -30,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -62,6 +57,7 @@ public class UserServiceImpl implements UserService {
             user.setRole(userDto.getRole());
             user.setUserStatus(UserStatus.USER);
             user.setLastLogInDate(LocalDateTime.now());
+            user.setActive(true);
             userRepository.save(user);
             return true;
         } catch (Exception e) {
@@ -84,7 +80,9 @@ public class UserServiceImpl implements UserService {
                             byUserName.getEmail(),
                             byUserName.getMobileNumber(),
                             byUserName.getUserName(),
-                            byUserName.getRole()
+                            byUserName.getRole(),
+                            byUserName.getUserStatus()
+
                     ), driverService.getNearestDrivers(loginInputDto.getLatitude(), loginInputDto.getLongitude()));
 
                 }
@@ -95,7 +93,8 @@ public class UserServiceImpl implements UserService {
                         byUserName.getEmail(),
                         byUserName.getMobileNumber(),
                         byUserName.getUserName(),
-                        byUserName.getRole()
+                        byUserName.getRole(),
+                        byUserName.getUserStatus()
                 ), null);
 
 
@@ -109,7 +108,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean rateDriver(RatingDto ratingDto){
+    public boolean rateDriver(RatingDto ratingDto) {
         try {
 
             Rating rating = new Rating();
@@ -126,20 +125,22 @@ public class UserServiceImpl implements UserService {
             rating.setReview(ratingDto.getReview());
             ratingRepository.save(rating);
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
     }
 
-    public List<UserDto> getAllActiveUsers(){
-        return userRepository.findAllByActiveTrue().stream()
+    public List<UserDto> getAllActiveUsers() {
+        return userRepository.findAllByUserStatusAndActiveTrue(UserStatus.USER).stream()
                 .map(user -> new UserDto(
                         user.getId(),
                         user.getName(),
                         user.getEmail(),
                         user.getMobileNumber(),
                         user.getUserName(),
-                        user.getRole()
+                        user.getRole(),
+                        user.getLastLogInDate(),
+                        user.getLastLogInDate()
                 )).collect(Collectors.toList());
     }
 
@@ -154,14 +155,16 @@ public class UserServiceImpl implements UserService {
                             user.getEmail(),
                             user.getMobileNumber(),
                             user.getUserName(),
-                            user.getRole()))
+                            user.getRole(),
+                            user.getLastLogInDate(),
+                            user.getLastLogInDate()))
                     .collect(Collectors.toList());
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
     }
 
-    public boolean deleteUser(Integer userID){
+    public boolean deleteUser(Integer userID) {
         User user = userRepository.findByIdAndActiveTrue(userID)
                 .orElseThrow(() -> new RuntimeException("Cannot find user " + userID));
         user.setActive(false);
@@ -174,43 +177,45 @@ public class UserServiceImpl implements UserService {
         try {
             Pageable pageable = PageRequest.of(0, 5);
             List<TaxiReservation> taxiReservationList = reservationRepository.findLastReservationsByUserId(userId, pageable);
-            if (taxiReservationList.isEmpty()) {
-                throw new RuntimeException("cannot find the reservation for this user");
-            }
 
             return taxiReservationList.stream()
                     .map(taxiReservation -> new ReservationAgainstUserDto(
+                            taxiReservation.getId(),
                             taxiReservation.getDriver().getName(),
-                            new RatingDto(
+                            taxiReservation.getDriver().getProfileImage(),
+                            taxiReservation.getDriver().getId(),
+                            taxiReservation.getRating() != null ? new RatingDto(
                                     taxiReservation.getRating().getUser().getId(),
                                     taxiReservation.getRating().getDriver().getId(),
                                     taxiReservation.getRating().getScore(),
                                     null,
                                     taxiReservation.getRating().getReview()
-                            ),
+                            ) : null,
                             taxiReservation.getReveredTime(),
                             getDistanceBetweenPoints(taxiReservation.getPickupLatitude(), taxiReservation.getPickupLongitude(), taxiReservation.getDropLatitude(), taxiReservation.getDropLongitude()),
-                            taxiReservation.getPaymentAmount()
+                            taxiReservation.getPickupLatitude(), taxiReservation.getPickupLongitude(), taxiReservation.getDropLatitude(), taxiReservation.getDropLongitude(),
+                            taxiReservation.getPaymentAmount(),
+                            taxiReservation.getStatus()
 
                     ))
                     .collect(Collectors.toList());
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
     }
 
     @Override
-    public double calculateAmountWithDistance(double latitude1, double longitude1, double latitude2, double longitude2){
+    public double calculateAmountWithDistance(double latitude1, double longitude1, double latitude2, double longitude2) {
         try {
             double betweenPoints = getDistanceBetweenPoints(latitude1, longitude1, latitude2, longitude2);
             double fullAmount = Math.round((betweenPoints * AmountPerKm) * 100.00) / 100.00;
             return fullAmount;
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
     }
 
-    private double getDistanceBetweenPoints(double latitude1, double longitude1, double latitude2, double longitude2){
+    private double getDistanceBetweenPoints(double latitude1, double longitude1, double latitude2, double longitude2) {
         DistanceResponseDto roadDistance = distanceCalculation.getRoadDistance(latitude1, longitude1, latitude2, longitude2);
         double distanceKm = roadDistance.getPaths().get(0).getDistance() / 1000.0;
         return distanceKm;
@@ -225,26 +230,31 @@ public class UserServiceImpl implements UserService {
 
             return taxiReservationList.stream()
                     .map(taxiReservation -> new ReservationAgainstUserDto(
+                            taxiReservation.getId(),
                             taxiReservation.getDriver().getName(),
-                            new RatingDto(
-                                    taxiReservation.getRating().getUser().getId(),
-                                    taxiReservation.getRating().getDriver().getId(),
-                                    taxiReservation.getRating().getScore(),
-                                    null,
-                                    taxiReservation.getRating().getReview()
-                            ),
+                            taxiReservation.getDriver().getProfileImage(),
+                            taxiReservation.getDriver().getId(),
+                            taxiReservation.getRating() != null ?
+                                    new RatingDto(
+                                            taxiReservation.getRating().getUser().getId(),
+                                            taxiReservation.getRating().getDriver().getId(),
+                                            taxiReservation.getRating().getScore(),
+                                            null,
+                                            taxiReservation.getRating().getReview()
+                                    ) : null,
                             taxiReservation.getReveredTime(),
                             getDistanceBetweenPoints(taxiReservation.getPickupLatitude(), taxiReservation.getPickupLongitude(), taxiReservation.getDropLatitude(), taxiReservation.getDropLongitude()),
-                            taxiReservation.getPaymentAmount()
-
+                            taxiReservation.getPickupLatitude(), taxiReservation.getPickupLongitude(), taxiReservation.getDropLatitude(), taxiReservation.getDropLongitude(),
+                            taxiReservation.getPaymentAmount(),
+                            taxiReservation.getStatus()
                     ))
                     .collect(Collectors.toList());
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
     }
 
-    public boolean updateUser(UserDto userDto){
+    public boolean updateUser(UserDto userDto) {
 
         User existingUser = userRepository.findById(userDto.getId())
                 .orElseThrow(() -> new RuntimeException("cannot find user " + userDto.getId()));
@@ -263,7 +273,20 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(existingUser);
         return true;
+    }
 
+    @Override
+    public boolean changePassword(ChangePasswordDto changePasswordDto) {
+        User existingUser = userRepository.findById(changePasswordDto.getId())
+                .orElseThrow(() -> new RuntimeException("cannot find user " + changePasswordDto.getId()));
+
+        if (existingUser.getPassword().equals(changePasswordDto.getCurrentPassword())){
+            existingUser.setPassword(changePasswordDto.getNewPassword());
+            userRepository.save(existingUser);
+            return true;
+        }else {
+            throw new RuntimeException("Current Password is invalid,Please enter your correct password");
+        }
     }
 
 

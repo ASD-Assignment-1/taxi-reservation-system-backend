@@ -158,7 +158,8 @@ public class ReservationServiceImpl implements ReservationService {
     public Double getDailyTotal(Integer driverId) {
         LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
         LocalDateTime endOfDay = startOfDay.plusDays(1);
-        return paymentRepository.getDailyTotal(driverId, startOfDay, endOfDay);
+        Double dailyTotal = paymentRepository.getDailyTotal(driverId, startOfDay, endOfDay);
+        return dailyTotal != null ? dailyTotal : 0.0;
     }
 
     @Override
@@ -166,7 +167,8 @@ public class ReservationServiceImpl implements ReservationService {
         LocalDate startOfWeek = LocalDate.now().with(java.time.DayOfWeek.MONDAY);
         LocalDateTime startOfWeekDateTime = startOfWeek.atStartOfDay();
         LocalDateTime endOfDay = LocalDateTime.now();
-        return paymentRepository.getWeeklyTotal(driverId, startOfWeekDateTime, endOfDay);
+        Double weeklyTotal = paymentRepository.getWeeklyTotal(driverId, startOfWeekDateTime, endOfDay);
+        return weeklyTotal != null ? weeklyTotal : 0.0;
     }
 
     @Override
@@ -174,7 +176,8 @@ public class ReservationServiceImpl implements ReservationService {
         LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
         LocalDateTime startOfMonthDateTime = startOfMonth.atStartOfDay();
         LocalDateTime endOfDay = LocalDateTime.now();
-        return paymentRepository.getMonthlyTotal(driverId, startOfMonthDateTime, endOfDay);
+        Double monthlyTotal= paymentRepository.getMonthlyTotal(driverId, startOfMonthDateTime, endOfDay);
+        return monthlyTotal != null ? monthlyTotal : 0.0;
     }
 
 }

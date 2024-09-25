@@ -21,4 +21,5 @@ public class ReservationDetailsDto {
     private double dropLatitude;
     private double dropLongitude;
     private ReservationStatus status;
+    private RatingDto ratingDto;
 }

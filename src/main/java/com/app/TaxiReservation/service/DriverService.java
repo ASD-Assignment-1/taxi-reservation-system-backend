@@ -1,5 +1,6 @@
 package com.app.TaxiReservation.service;
 
+import com.app.TaxiReservation.dto.ChangePasswordDto;
 import com.app.TaxiReservation.dto.DriverDto;
 import com.app.TaxiReservation.dto.LoginInputDto;
 import com.app.TaxiReservation.dto.ReservationDetailsDto;
@@ -32,4 +33,6 @@ public interface DriverService {
     ReservationDetailsDto getOngoingReservation(Integer driverID);
 
     List<ReservationDetailsDto> getAllReservationByID(Integer driverId);
+
+    boolean changePassword(ChangePasswordDto changePasswordDto);
 }

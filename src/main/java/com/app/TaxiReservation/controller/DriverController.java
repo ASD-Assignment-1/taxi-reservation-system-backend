@@ -1,5 +1,6 @@
 package com.app.TaxiReservation.controller;
 
+import com.app.TaxiReservation.dto.ChangePasswordDto;
 import com.app.TaxiReservation.dto.DriverDto;
 import com.app.TaxiReservation.dto.LoginInputDto;
 import com.app.TaxiReservation.service.DriverService;
@@ -61,7 +62,7 @@ public class DriverController {
         return new ResponseUtil(200, "success", driverService.updateDriver(driverDto));
     }
 
-    @PostMapping("/updateStatus")
+    @GetMapping("/updateStatus")
     public ResponseUtil login(@RequestParam Integer driverID, @RequestParam String status) {
         return new ResponseUtil(200, "success", driverService.changeDriverStatus(driverID, status));
     }
@@ -73,7 +74,7 @@ public class DriverController {
 
     @GetMapping("/weeklyIncome")
     public ResponseUtil getWeeklyTotal(@RequestParam Integer driverID) {
-        return new ResponseUtil(200, "success", reservationService.getMonthlyTotal(driverID));
+        return new ResponseUtil(200, "success", reservationService.getWeeklyTotal(driverID));
     }
 
     @GetMapping("/monthlyIncome")
@@ -89,5 +90,10 @@ public class DriverController {
     @GetMapping("/allReservation")
     public ResponseUtil getAllReservations(@RequestParam Integer driverID) {
         return new ResponseUtil(200, "success", driverService.getAllReservationByID(driverID));
+    }
+
+    @PostMapping("/changePassword")
+    public ResponseUtil changePassword(@RequestBody ChangePasswordDto changePasswordDto) {
+        return new ResponseUtil(200, "success", driverService.changePassword(changePasswordDto));
     }
 }

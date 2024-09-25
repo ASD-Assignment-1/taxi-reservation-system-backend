@@ -1,9 +1,6 @@
 package com.app.TaxiReservation.service.impl;
 
-import com.app.TaxiReservation.dto.AdminReservationDto;
-import com.app.TaxiReservation.dto.ReservationDetailsDto;
-import com.app.TaxiReservation.dto.ReservationDto;
-import com.app.TaxiReservation.dto.UserDto;
+import com.app.TaxiReservation.dto.*;
 import com.app.TaxiReservation.entity.Driver;
 import com.app.TaxiReservation.entity.TaxiReservation;
 import com.app.TaxiReservation.entity.User;
@@ -72,6 +69,7 @@ public class AdminServiceImpl implements AdminService {
             return true;
 
         }catch (Exception e){
+            e.printStackTrace();
             throw new RuntimeException(e.getMessage());
         }
     }
@@ -85,6 +83,7 @@ public class AdminServiceImpl implements AdminService {
             user.setEmail(userDto.getEmail());
             user.setMobileNumber(userDto.getMobileNumber());
             user.setUserStatus(UserStatus.GUEST);
+            user.setActive(true);
             user.setRole(Role.USER);
 
             User createdUser = userRepository.save(user);
@@ -102,7 +101,8 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public double getAllFullTotalIncome(){
-        return paymentRepository.sumAmountByPaymentStatus(PaymentStatus.DONE);
+        Double totalIncome = paymentRepository.sumAmountByPaymentStatus(PaymentStatus.DONE);
+        return totalIncome != null ? totalIncome : 0.0;
     }
 
     @Override
@@ -122,7 +122,8 @@ public class AdminServiceImpl implements AdminService {
                                 taxiReservation.getUser().getEmail(),
                                 taxiReservation.getUser().getMobileNumber(),
                                 taxiReservation.getUser().getUserName(),
-                                taxiReservation.getUser().getRole()
+                                taxiReservation.getUser().getRole(),
+                                taxiReservation.getUser().getUserStatus()
                         ),
                         null,
                         taxiReservation.getReveredTime(),
@@ -131,7 +132,15 @@ public class AdminServiceImpl implements AdminService {
                         taxiReservation.getPickupLongitude(),
                         taxiReservation.getDropLatitude(),
                         taxiReservation.getDropLongitude(),
-                        taxiReservation.getStatus()
+                        taxiReservation.getStatus(),
+                        taxiReservation.getRating() != null ?
+                        new RatingDto(
+                                taxiReservation.getRating().getUser().getId(),
+                                taxiReservation.getRating().getDriver().getId(),
+                                taxiReservation.getRating().getScore(),
+                                taxiReservation.getRating().getTaxiReservation().getId(),
+                                taxiReservation.getRating().getReview()
+                        ) : null
                 ))
                 .collect(Collectors.toList());
     }

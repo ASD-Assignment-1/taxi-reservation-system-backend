@@ -1,11 +1,6 @@
 package com.app.TaxiReservation.service;
 
-import com.app.TaxiReservation.dto.LoginInputDto;
-import com.app.TaxiReservation.dto.LoginUserOutputDto;
-import com.app.TaxiReservation.dto.RatingDto;
-import com.app.TaxiReservation.dto.ReservationAgainstUserDto;
-import com.app.TaxiReservation.dto.ReservationDetailsDto;
-import com.app.TaxiReservation.dto.UserDto;
+import com.app.TaxiReservation.dto.*;
 
 import java.util.List;
 
@@ -30,4 +25,6 @@ public interface UserService {
     List<ReservationAgainstUserDto> getAllReservationWithID(Integer userId);
 
     boolean updateUser(UserDto userDto);
+
+    boolean changePassword(ChangePasswordDto changePasswordDto);
 }

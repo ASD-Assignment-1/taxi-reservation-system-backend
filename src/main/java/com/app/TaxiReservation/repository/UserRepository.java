@@ -2,6 +2,7 @@ package com.app.TaxiReservation.repository;
 
 import com.app.TaxiReservation.entity.User;
 import com.app.TaxiReservation.util.Role;
+import com.app.TaxiReservation.util.Status.UserStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,9 +20,9 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query("SELECT COUNT(u) FROM User u WHERE u.role <> :adminRole AND u.role <> :driverRole AND u.active = true")
     long countUsersExcludingAdminAndDriver(@Param("adminRole") Role adminRole, @Param("driverRole") Role driverRole);
 
-    List<User> findAllByActiveTrue();
+    List<User> findAllByUserStatusAndActiveTrue(UserStatus userStatus);
 
     @Query("SELECT user FROM User user " +
-            "WHERE (:name IS NULL OR user.name LIKE %:name%) AND user.active = true ")
+            "WHERE (:name IS NULL OR user.name LIKE %:name%) AND user.active = true AND user.userStatus = 'USER' ")
     List<User> findByName(@Param("name") String name);
 }
