@@ -51,8 +51,8 @@ public class User {
     @Column(name = "active", nullable = false)
     private boolean active;
 
-    @OneToOne(mappedBy = "user")
-    private TaxiReservation taxiReservation;
+    @OneToMany(mappedBy = "user")
+    private List<TaxiReservation> taxiReservation;
 
     @OneToMany(mappedBy = "user")
     private List<Rating> ratings;

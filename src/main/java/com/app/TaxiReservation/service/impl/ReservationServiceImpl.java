@@ -1,8 +1,7 @@
 package com.app.TaxiReservation.service.impl;
 
+import com.app.TaxiReservation.dto.*;
 import com.app.TaxiReservation.dto.DistanceDto.DistanceResponseDto;
-import com.app.TaxiReservation.dto.DriverDto;
-import com.app.TaxiReservation.dto.ReservationDto;
 import com.app.TaxiReservation.entity.Driver;
 import com.app.TaxiReservation.entity.Payment;
 import com.app.TaxiReservation.entity.TaxiReservation;
@@ -27,6 +26,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ReservationServiceImpl implements ReservationService {
@@ -52,10 +54,9 @@ public class ReservationServiceImpl implements ReservationService {
 
             TaxiReservation taxiReservation = new TaxiReservation();
             User user = userRepository.findByIdAndActiveTrue(reservationDto.getUserId()).get();
-            taxiReservation.setUser(user);
-
             Driver byUserName = driverRepository.findByUserNameAndActiveTrue(reservationDto.getDriverUserName());
 
+            taxiReservation.setUser(user);
             taxiReservation.setDriver(byUserName);
             taxiReservation.setReveredTime(LocalDateTime.now());
 
@@ -178,6 +179,40 @@ public class ReservationServiceImpl implements ReservationService {
         LocalDateTime endOfDay = LocalDateTime.now();
         Double monthlyTotal= paymentRepository.getMonthlyTotal(driverId, startOfMonthDateTime, endOfDay);
         return monthlyTotal != null ? monthlyTotal : 0.0;
+    }
+
+    @Override
+    public List<ReservationDetailsDto> getOngoingReservation() {
+        List<Optional<TaxiReservation>> byStatus = reservationRepository.findByStatus(ReservationStatus.START);
+        return byStatus.stream()
+                .map(taxiReservation -> new ReservationDetailsDto(
+                        taxiReservation.get().getId(),
+                        new UserDto(
+                                taxiReservation.get().getUser().getId(),
+                                taxiReservation.get().getUser().getName(),
+                                taxiReservation.get().getUser().getEmail(),
+                                taxiReservation.get().getUser().getMobileNumber(),
+                                taxiReservation.get().getUser().getUserName(),
+                                taxiReservation.get().getUser().getRole(),
+                                taxiReservation.get().getUser().getUserStatus()
+                        ),
+                        new DriverDto(
+                                taxiReservation.get().getDriver().getName(),
+                                taxiReservation.get().getDriver().getEmail(),
+                                taxiReservation.get().getDriver().getMobileNumber(),
+                                taxiReservation.get().getDriver().getUserName(),
+                                taxiReservation.get().getDriver().getLicenseNumber()
+                        ),
+                        taxiReservation.get().getReveredTime(),
+                        taxiReservation.get().getPaymentAmount(),
+                        taxiReservation.get().getPickupLatitude(),
+                        taxiReservation.get().getPickupLongitude(),
+                        taxiReservation.get().getDropLatitude(),
+                        taxiReservation.get().getDropLongitude(),
+                        taxiReservation.get().getStatus(),
+                         null
+                ))
+                .collect(Collectors.toList());
     }
 
 }
