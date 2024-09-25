@@ -3,6 +3,7 @@ package com.app.TaxiReservation.service.impl;
 import com.app.TaxiReservation.dto.*;
 import com.app.TaxiReservation.dto.DistanceDto.DistanceResponseDto;
 import com.app.TaxiReservation.entity.Driver;
+import com.app.TaxiReservation.entity.Rating;
 import com.app.TaxiReservation.entity.TaxiReservation;
 import com.app.TaxiReservation.entity.User;
 import com.app.TaxiReservation.exception.RuntimeException;
@@ -132,6 +133,11 @@ public class DriverServiceImpl implements DriverService {
                         driver.getLatitude(), driver.getLongitude());
 
                 double distanceKm = roadDistance.getPaths().get(0).getDistance() / 1000.0;
+
+                double averageScore = driver.getRatings().stream()
+                        .mapToInt(Rating::getScore)
+                        .sum() / (double) driver.getRatings().size();
+
                 // filtering the drivers within 2 km
                 if (distanceKm <= 2) {
                     nearbyDrivers.add(new DriverDto(driver.getName(),
@@ -139,7 +145,8 @@ public class DriverServiceImpl implements DriverService {
                             driver.getMobileNumber(),
                             driver.getUserName(),
                             driver.getLicenseNumber(),
-                            driver.getProfileImage()));
+                            driver.getProfileImage(), averageScore)
+                            );
                 }
             }
         }
@@ -276,12 +283,12 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public long countAllDrivers(){
+    public long countAllDrivers() {
         return driverRepository.countAllDrivers();
     }
 
     @Override
-    public boolean changeDriverStatus(Integer driverID, String status){
+    public boolean changeDriverStatus(Integer driverID, String status) {
         Driver driver = driverRepository.findByIdAndActive(driverID, true)
                 .orElseThrow(() -> new RuntimeException("Cannot find the driver " + driverID));
         driver.setDriverStatus(DriverStatus.fromDisplayName(status));
@@ -290,11 +297,11 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public ReservationDetailsDto getOngoingReservation(Integer driverID){
+    public ReservationDetailsDto getOngoingReservation(Integer driverID) {
 
         try {
             TaxiReservation tripByDriverID = reservationRepository.findOngoingTripByDriverID(driverID, ReservationStatus.START);
-            if (tripByDriverID==null) {
+            if (tripByDriverID == null) {
                 throw new RuntimeException("Not any ongoing trip");
             }
             return new ReservationDetailsDto(
@@ -318,7 +325,7 @@ public class DriverServiceImpl implements DriverService {
                     tripByDriverID.getStatus(),
                     null
             );
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
 
@@ -366,11 +373,11 @@ public class DriverServiceImpl implements DriverService {
         Driver existingUser = driverRepository.findById(changePasswordDto.getId())
                 .orElseThrow(() -> new RuntimeException("cannot find user " + changePasswordDto.getId()));
 
-        if (existingUser.getPassword().equals(changePasswordDto.getCurrentPassword())){
+        if (existingUser.getPassword().equals(changePasswordDto.getCurrentPassword())) {
             existingUser.setPassword(changePasswordDto.getNewPassword());
             driverRepository.save(existingUser);
             return true;
-        }else {
+        } else {
             throw new RuntimeException("Current Password is invalid,Please enter your correct password");
         }
     }

@@ -24,10 +24,10 @@ public interface ReservationRepository extends JpaRepository<TaxiReservation, In
     @Query("SELECT r FROM TaxiReservation r WHERE r.driver.id = :driverId ORDER BY r.reveredTime DESC")
     List<TaxiReservation> findAllByDriverID(@Param("driverId") Integer driverId);
 
-    @Query("SELECT r FROM TaxiReservation r WHERE r.driver.id = :driverId ORDER BY r.reveredTime DESC")
+    @Query("SELECT r FROM TaxiReservation r WHERE r.driver.id = :driverId AND r.status='END' ORDER BY r.reveredTime DESC")
     List<TaxiReservation> findLastReservationsByDriverId(@Param("driverId") Integer driverId, Pageable pageable);
 
-    @Query("SELECT r FROM TaxiReservation r WHERE r.user.id = :userId ORDER BY r.reveredTime DESC")
+    @Query("SELECT r FROM TaxiReservation r WHERE r.user.id = :userId AND r.status='END' ORDER BY r.reveredTime DESC")
     List<TaxiReservation> findLastReservationsByUserId(@Param("userId") Integer userId, Pageable pageable);
 
     @Query("SELECT r FROM TaxiReservation r  ORDER BY r.reveredTime DESC")

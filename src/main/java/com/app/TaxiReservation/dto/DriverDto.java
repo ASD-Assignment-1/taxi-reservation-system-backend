@@ -25,14 +25,16 @@ public class DriverDto {
     private String status;
     private LocalDateTime lastLogInDate;
     private LocalDateTime lastLogOutDate;
+    private Double averageScore;
 
-    public DriverDto(String name, String email, String mobileNumber, String userName, String licenseNumber, String profileImage) {
+    public DriverDto(String name, String email, String mobileNumber, String userName, String licenseNumber, String profileImage,Double score) {
         this.name = name;
         this.email = email;
         this.mobileNumber = mobileNumber;
         this.userName = userName;
         this.licenseNumber = licenseNumber;
         this.profileImage = profileImage;
+        this.averageScore = score;
     }
 
     public DriverDto(String name, String email, String mobileNumber, String userName, String licenseNumber) {
