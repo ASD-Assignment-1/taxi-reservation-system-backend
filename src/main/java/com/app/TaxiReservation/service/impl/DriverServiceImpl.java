@@ -288,10 +288,12 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public boolean changeDriverStatus(Integer driverID, String status) {
+    public boolean changeDriverStatus(Integer driverID, String status,Double lat,Double lng) {
         Driver driver = driverRepository.findByIdAndActive(driverID, true)
                 .orElseThrow(() -> new RuntimeException("Cannot find the driver " + driverID));
         driver.setDriverStatus(DriverStatus.fromDisplayName(status));
+        driver.setLatitude(lat);
+        driver.setLongitude(lng);
         driverRepository.save(driver);
         return true;
     }

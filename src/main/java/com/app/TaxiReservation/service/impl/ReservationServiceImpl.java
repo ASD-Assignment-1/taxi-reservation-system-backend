@@ -83,7 +83,7 @@ public class ReservationServiceImpl implements ReservationService {
             ));
 
             reservationRepository.save(taxiReservation);
-            resetDriverStatus(byUserName.getId(), DriverStatus.BUSY);
+            resetDriverStatus(byUserName.getId(), DriverStatus.BUSY, taxiReservation.getDropLatitude(), taxiReservation.getDropLongitude());
 
             return true;
 
@@ -131,7 +131,7 @@ public class ReservationServiceImpl implements ReservationService {
             payment.setPaymentTime(LocalDateTime.now());
             payment.setPaymentStatus(PaymentStatus.DONE);
 
-            resetDriverStatus(taxiReservation.getDriver().getId(), DriverStatus.AV);
+            resetDriverStatus(taxiReservation.getDriver().getId(), DriverStatus.AV,taxiReservation.getDropLatitude(),taxiReservation.getDropLongitude());
 
             paymentRepository.save(payment);
 
@@ -144,11 +144,13 @@ public class ReservationServiceImpl implements ReservationService {
 
     }
 
-    private void resetDriverStatus(Integer driverID , DriverStatus driverStatus){
+    private void resetDriverStatus(Integer driverID, DriverStatus driverStatus, double dropLatitude, double dropLongitude){
         try {
 
             Driver driver = driverRepository.findByIdAndActive(driverID, true).get();
             driver.setDriverStatus(driverStatus);
+            driver.setLatitude(dropLatitude);
+            driver.setLongitude(dropLongitude);
             driverRepository.save(driver);
 
         }catch (Exception e){

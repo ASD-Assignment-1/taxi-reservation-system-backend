@@ -63,8 +63,8 @@ public class DriverController {
     }
 
     @GetMapping("/updateStatus")
-    public ResponseUtil login(@RequestParam Integer driverID, @RequestParam String status) {
-        return new ResponseUtil(200, "success", driverService.changeDriverStatus(driverID, status));
+    public ResponseUtil login(@RequestParam Integer driverID, @RequestParam String status,@RequestParam double lat, @RequestParam double lng) {
+        return new ResponseUtil(200, "success", driverService.changeDriverStatus(driverID, status,lat,lng));
     }
 
     @GetMapping("/dailyIncome")

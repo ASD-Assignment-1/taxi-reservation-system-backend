@@ -28,7 +28,7 @@ public interface DriverService {
 
     long countAllDrivers();
 
-    boolean changeDriverStatus(Integer driverID, String status);
+    boolean changeDriverStatus(Integer driverID, String status,Double lat,Double lng);
 
     ReservationDetailsDto getOngoingReservation(Integer driverID);
 
