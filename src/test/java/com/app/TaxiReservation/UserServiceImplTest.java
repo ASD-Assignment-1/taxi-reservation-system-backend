@@ -10,6 +10,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,10 +22,13 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import com.app.TaxiReservation.dto.ChangePasswordDto;
 import com.app.TaxiReservation.dto.LoginInputDto;
 import com.app.TaxiReservation.dto.LoginUserOutputDto;
 import com.app.TaxiReservation.dto.RatingDto;
+import com.app.TaxiReservation.dto.ReservationAgainstUserDto;
 import com.app.TaxiReservation.dto.UserDto;
+import com.app.TaxiReservation.dto.DistanceDto.DistanceResponseDto;
 import com.app.TaxiReservation.entity.Driver;
 import com.app.TaxiReservation.entity.Rating;
 import com.app.TaxiReservation.entity.TaxiReservation;
@@ -145,6 +149,27 @@ public class UserServiceImplTest {
     }
 
     @Test
+    public void testSearch(){
+
+        String userName = "JohnDoe";
+        User user = new User();
+        user.setId(1);
+        user.setName("John Doe");
+        user.setEmail("john@example.com");
+        user.setMobileNumber("1234567890");
+        user.setUserName("JohnDoe");
+        List<User> users = List.of(user);
+
+        when(userRepository.findByName(userName)).thenReturn(users);
+
+        List<UserDto> result = userService.search(userName);
+
+        assertEquals(1, result.size());
+        assertEquals("John Doe", result.get(0).getName());
+        verify(userRepository, times(1)).findByName(userName);
+    }
+
+    @Test
     public void testDeleteUser() {
 
         User user = new User();
@@ -170,6 +195,36 @@ public class UserServiceImplTest {
 
         assertTrue(result);
         verify(userRepository, times(1)).save(existingUser);
+    }
+
+    @Test
+    public void testChangePassword(){
+
+        ChangePasswordDto changePasswordDto = new ChangePasswordDto(1, "currentPassword", "newPassword");
+        User existingUser = new User();
+        existingUser.setId(1);
+        existingUser.setPassword("currentPassword");
+        when(userRepository.findById(changePasswordDto.getId())).thenReturn(Optional.of(existingUser));
+
+        boolean result = userService.changePassword(changePasswordDto);
+
+        assertTrue(result);
+        verify(userRepository, times(1)).save(existingUser);
+
+    }
+
+    @Test
+    public void testChangePassword_InvalidCurrentPassword(){
+
+        
+        ChangePasswordDto changePasswordDto = new ChangePasswordDto(1, "wrongPassword", "newPassword");
+        User existingUser = new User();
+        existingUser.setId(1);
+        existingUser.setPassword("currentPassword");
+        when(userRepository.findById(changePasswordDto.getId())).thenReturn(Optional.of(existingUser));
+
+        assertThrows(RuntimeException.class, () -> userService.changePassword(changePasswordDto));
+
     }
 
 }
