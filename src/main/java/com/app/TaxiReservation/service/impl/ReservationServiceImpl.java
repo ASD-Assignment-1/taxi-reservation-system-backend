@@ -95,7 +95,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     }
 
-    private void sendDriverDetails(String toEmail, DriverDto driverDto) {
+    public void sendDriverDetails(String toEmail, DriverDto driverDto) {
         try {
 
             SimpleMailMessage message = new SimpleMailMessage();
@@ -144,7 +144,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     }
 
-    private void resetDriverStatus(Integer driverID, DriverStatus driverStatus, double dropLatitude, double dropLongitude){
+     public void resetDriverStatus(Integer driverID, DriverStatus driverStatus, double dropLatitude, double dropLongitude){
         try {
 
             Driver driver = driverRepository.findByIdAndActive(driverID, true).get();
