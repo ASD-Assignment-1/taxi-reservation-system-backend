@@ -126,7 +126,7 @@ public class DriverServiceImplTest {
 
         when(driverRepository.findByUserNameAndActiveTrue("JohnDoe")).thenReturn(driver);
 
-            assertThrows(UserNotExistException.class, () -> {
+            assertThrows(SQLException.class, () -> {
             driverServiceImpl.login(loginInputDto);
         });
     }

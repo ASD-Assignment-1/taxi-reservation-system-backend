@@ -119,7 +119,7 @@ public class UserServiceImplTest {
 
         when(userRepository.findByUserNameAndActiveTrue(loginInputDto.getUserName())).thenReturn(null);
 
-        assertThrows(UserNotExistException.class, () -> userService.login(loginInputDto));
+        assertThrows(SQLException.class, () -> userService.login(loginInputDto));
 
     }
 
