@@ -71,7 +71,7 @@ public class ReservationServiceImplTest {
 
     @Test
     public void testSendDriverDetails(){
-        DriverDto driverDto = new DriverDto("Driver One", "driver@example.com", "123456789", "driver1", "LIC123");
+        DriverDto driverDto = new DriverDto("John Doe", "john@example.com", "123456789", "JohnDoe", "LIC123");
         doNothing().when(javaMailSender).send(any(SimpleMailMessage.class));
 
         reservationServiceImpl.sendDriverDetails("user@example.com", driverDto);

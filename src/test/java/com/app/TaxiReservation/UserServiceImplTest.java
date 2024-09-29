@@ -204,26 +204,32 @@ public class UserServiceImplTest {
         User existingUser = new User();
         existingUser.setId(1);
         existingUser.setPassword("currentPassword");
+
         when(userRepository.findById(changePasswordDto.getId())).thenReturn(Optional.of(existingUser));
 
         boolean result = userService.changePassword(changePasswordDto);
 
         assertTrue(result);
+        assertEquals("newPassword", existingUser.getPassword());
         verify(userRepository, times(1)).save(existingUser);
 
     }
 
     @Test
     public void testChangePassword_InvalidCurrentPassword(){
-
         
         ChangePasswordDto changePasswordDto = new ChangePasswordDto(1, "wrongPassword", "newPassword");
         User existingUser = new User();
         existingUser.setId(1);
         existingUser.setPassword("currentPassword");
+
         when(userRepository.findById(changePasswordDto.getId())).thenReturn(Optional.of(existingUser));
 
-        assertThrows(RuntimeException.class, () -> userService.changePassword(changePasswordDto));
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            userService.changePassword(changePasswordDto);
+        });
+
+        assertEquals("Current Password is invalid,Please enter your correct password", exception.getMessage());
 
     }
 
